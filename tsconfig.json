@@ -1,0 +1,21 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "strict": true,
+        "target": "ES2023",
+        "moduleResolution": "Bundler",
+        // "checkJs": true,
+        // "allowJs": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "/nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs/src/jsx",
+        "paths": {
+            "astal": [
+                "/nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs"
+            ],
+            "astal/*": [
+                "/nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs/src/*"
+            ]
+        },
+    }
+}
