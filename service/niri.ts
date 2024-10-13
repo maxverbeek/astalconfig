@@ -1,12 +1,28 @@
 import GObject, { property, register, signal } from "astal/gobject";
 import GLib from "gi://GLib?version=2.0";
 import Gio from "gi://Gio?version=2.0";
-import Hyprland from "gi://AstalHyprland";
 
-const hyprland = Hyprland.get_default()
+type Workspace = {
+  id: number,
+  idx: number,
+  name: string | null,
+  output: string,
+  is_active: boolean,
+  is_focused: boolean,
+  active_window_id: number | null
+}
 
-for (const client of hyprland.get_clients()) {
-  console.log(client.title)
+type Window = {
+  id: number,
+  title: string | null,
+  app_id: string,
+  workspace_id: number,
+  is_focused: boolean,
+}
+
+type State = {
+  workspaces: Map<number, Workspace>,
+  windows: Map<number, Window>
 }
 
 @register({ GTypeName: 'Niri' })
@@ -17,19 +33,33 @@ export default class Niri extends GObject.Object {
   @signal(String, String)
   declare mySignal: (a: string, b: string) => void
 
+  #state: State
+
   constructor() {
     super()
-    this.connectSocket()
+
+    this.#state = {
+      workspaces: new Map(),
+      windows: new Map(),
+    }
+
+    this.listenEventStream()
   }
 
-  private connectSocket() {
+  private newConnection(): Gio.SocketConnection {
     const path = GLib.getenv('NIRI_SOCKET')!
     const client = new Gio.SocketClient().connect(new Gio.UnixSocketAddress({ path }), null)
+
+    return client
+  }
+
+  private listenEventStream() {
+    const client = this.newConnection()
 
     client.get_output_stream().write(JSON.stringify("EventStream") + "\n", null)
 
     const inputstream = new Gio.DataInputStream({
-      // closeBaseStream: true,
+      closeBaseStream: true,
       baseStream: client.get_input_stream()
     })
 
@@ -40,7 +70,12 @@ export default class Niri extends GObject.Object {
       }
 
       const line = stream.read_line_finish(result)[0] ?? new Uint8Array([])
-      console.log(new TextDecoder().decode(line))
+      const text = new TextDecoder().decode(line)
+      console.log(text)
+
+      const message = JSON.parse(text)
+
+      this.reconcileState(message)
     })
   }
 
@@ -53,6 +88,126 @@ export default class Niri extends GObject.Object {
       }
 
       this.readLineSocket(stream, callback)
+    })
+  }
+
+  private reconcileState(message: any) {
+    if ('WorkspacesChanged' in message) {
+      // what is typesafety?
+      this.reconcileWorkspacesChanged(message.WorkspacesChanged.workspaces)
+    }
+
+    if ('WorkspaceActivated' in message) {
+      this.reconcileWorkspaceActivated(message.WorkspaceActivated)
+    }
+
+    if ('WorkspaceActiveWindowChanged' in message) {
+      this.reconcileWorkspaceActiveWindowChanged(message.WorkspaceActiveWindowChanged)
+    }
+
+    if ('WindowsChanged' in message) {
+      this.reconcileWindowsChanged(message.WindowsChanged.windows)
+    }
+
+    if ('WindowOpenedOrChanged' in message) {
+      this.reconcileWindowOpenedOrChanged(message.WindowOpenedOrChanged.window)
+    }
+
+    if ('WindowClosed' in message) {
+      this.reconcileWindowClosed(message.WindowClosed)
+    }
+
+    if ('WindowFocusChanged' in message) {
+      this.reconcileWindowFocusChanged(message.WindowFocusChanged)
+    }
+  }
+
+  private reconcileWorkspacesChanged(workspaces: Workspace[]) {
+    this.#state['workspaces'] = new Map(workspaces.map(ws => ([ws.idx, {
+      id: ws.id,
+      idx: ws.idx,
+      name: ws.name,
+      output: ws.output,
+      active_window_id: ws.active_window_id,
+      is_focused: ws.is_focused,
+      is_active: ws.is_active
+    }])))
+  }
+
+  private reconcileWorkspaceActivated(workspaceActivated: any) {
+    const id: number = workspaceActivated.id
+    const focused: boolean = workspaceActivated.focused
+
+    const workspace = this.#state.workspaces.get(id)
+
+    if (!workspace) {
+      console.warn(`Workspace ID ${id} not found in state`)
+      return
+    }
+
+    const output = workspace.output
+
+    this.#state.workspaces = new Map(Array.from(this.#state.workspaces, ([key, ws]) => {
+      if (ws.output == output) {
+        return [key, { ...ws, is_active: focused && id === ws.id }]
+      }
+
+      return [key, ws]
+    }))
+  }
+
+  private reconcileWorkspaceActiveWindowChanged(workspaceActiveWindowChanged: { workspace_id: number, active_window_id: number }) {
+    const id = workspaceActiveWindowChanged.workspace_id
+    const active_window_id = workspaceActiveWindowChanged.active_window_id
+
+    const workspace = this.#state.workspaces.get(id)
+
+    if (!workspace) {
+      console.warn(`Workspace ID ${id} not found in state`)
+      return
+    }
+
+    workspace.active_window_id = active_window_id
+  }
+
+  private reconcileWindowsChanged(windows: Window[]) {
+    this.#state.windows = new Map(windows.map(w => [w.id, {
+      id: w.id,
+      title: w.title,
+      app_id: w.app_id,
+      workspace_id: w.workspace_id,
+      is_focused: w.is_focused
+    }]))
+  }
+
+  private reconcileWindowOpenedOrChanged(window: Window) {
+    if (!this.#state.windows.has(window.id)) {
+      this.#state.windows.set(window.id, window)
+    }
+
+    if (window.is_focused) {
+      this.#state.windows.forEach((window, key) => {
+        if (key != window.id) {
+          window.is_focused = false
+        }
+      })
+    }
+  }
+
+  private reconcileWindowClosed(windowClosed: { id: number }) {
+    this.#state.windows.delete(windowClosed.id)
+  }
+
+  private reconcileWindowFocusChanged(windowFocusChanged: { id: number }) {
+    const window = this.#state.windows.get(windowFocusChanged.id)
+
+    if (!window) {
+      console.warn(`Cannot find window with ID ${windowFocusChanged.id} in the state`)
+      return
+    }
+
+    this.#state.windows.forEach((win, key) => {
+      win.is_focused = (key === windowFocusChanged.id)
     })
   }
 }

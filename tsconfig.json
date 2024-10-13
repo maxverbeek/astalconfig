@@ -4,6 +4,7 @@
         "experimentalDecorators": true,
         "strict": true,
         "target": "ES2023",
+        "lib": ["es2023"],
         "moduleResolution": "Bundler",
         // "checkJs": true,
         // "allowJs": true,
