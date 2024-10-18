@@ -158,7 +158,7 @@ export default class Niri extends GObject.Object {
   }
 
   private reconcileWorkspacesChanged(workspaces: Workspace[]) {
-    this.#state['workspaces'] = new Map(workspaces.map(ws => ([ws.idx, {
+    this.#state.workspaces = new Map(workspaces.map(ws => ([ws.id, {
       id: ws.id,
       idx: ws.idx,
       name: ws.name,
