@@ -3,8 +3,9 @@
     "compilerOptions": {
         "experimentalDecorators": true,
         "strict": true,
-        "target": "ES2023",
-        "lib": ["es2023"],
+        "target": "ESNext",
+        "module": "ESNext",
+        "lib": ["ESNext"],
         "moduleResolution": "Bundler",
         // "checkJs": true,
         // "allowJs": true,

@@ -1,5 +1,8 @@
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __typeError = (msg) => {
+  throw TypeError(msg);
+};
 var __decorateClass = (decorators, target, key, kind) => {
   var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
   for (var i = decorators.length - 1, decorator; i >= 0; i--)
@@ -8,6 +11,10 @@ var __decorateClass = (decorators, target, key, kind) => {
   if (kind && result) __defProp(target, key, result);
   return result;
 };
+var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
+var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
 
 // ../../../../nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs/src/imports.ts
 import { default as default2 } from "gi://Astal?version=0.1";
@@ -96,8 +103,8 @@ var Binding = class _Binding {
         callback(this.get());
       });
     } else if (typeof this.#emitter.connect === "function") {
-      const signal2 = `notify::${this.#prop}`;
-      const id = this.#emitter.connect(signal2, () => {
+      const signal = `notify::${this.#prop}`;
+      const id = this.#emitter.connect(signal, () => {
         callback(this.get());
       });
       return () => {
@@ -428,11 +435,11 @@ function astalify(cls) {
           this._setChildren(mergedChildren);
         }
       }
-      for (const [signal2, callback] of onHandlers) {
+      for (const [signal, callback] of onHandlers) {
         if (typeof callback === "function") {
-          this.connect(signal2, callback);
+          this.connect(signal, callback);
         } else {
-          this.connect(signal2, () => execAsync(callback).then(print).catch(console.error));
+          this.connect(signal, () => execAsync(callback).then(print).catch(console.error));
         }
       }
       for (const [prop, binding] of bindings) {
@@ -714,84 +721,6 @@ default5.init(null);
 // inline:/home/max/Personal/astalconfig/style.css
 var style_default = "window.Bar {\n    background: transparent;\n    color: @theme_fg_color;\n    font-weight: bold;\n}\n\nwindow.Bar>centerbox {\n    background: @theme_bg_color;\n    border-radius: 10px;\n    margin: 8px;\n}\n\nwindow.Bar button {\n    border-radius: 8px;\n    margin: 2px;\n}\n";
 
-// ../../../../nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs/src/jsx/jsx-runtime.ts
-function isArrowFunction(func) {
-  return !Object.hasOwn(func, "prototype");
-}
-function jsx(ctor, { children, ...props }) {
-  children ??= [];
-  if (!Array.isArray(children))
-    children = [children];
-  children = children.filter(Boolean);
-  if (children.length === 1)
-    props.child = children[0];
-  else if (children.length > 1)
-    props.children = children;
-  if (typeof ctor === "string") {
-    return new ctors[ctor](props);
-  }
-  if (isArrowFunction(ctor))
-    return ctor(props);
-  return new ctor(props);
-}
-var ctors = {
-  box: Box,
-  button: Button,
-  centerbox: CenterBox,
-  circularprogress: CircularProgress,
-  drawingarea: DrawingArea,
-  entry: Entry,
-  eventbox: EventBox,
-  // TODO: fixed
-  // TODO: flowbox
-  icon: Icon,
-  label: Label,
-  levelbar: LevelBar,
-  // TODO: listbox
-  overlay: Overlay,
-  revealer: Revealer,
-  scrollable: Scrollable,
-  slider: Slider,
-  stack: Stack,
-  switch: Switch,
-  window: Window
-};
-var jsxs = jsx;
-
-// widget/Bar.tsx
-var time = Variable("").poll(1e3, "date");
-function Bar(monitor) {
-  return /* @__PURE__ */ jsx(
-    "window",
-    {
-      className: "Bar",
-      monitor,
-      exclusivity: default2.Exclusivity.EXCLUSIVE,
-      anchor: default2.WindowAnchor.TOP | default2.WindowAnchor.LEFT | default2.WindowAnchor.RIGHT,
-      application: application_default,
-      children: /* @__PURE__ */ jsxs("centerbox", { children: [
-        /* @__PURE__ */ jsx(
-          "button",
-          {
-            onClicked: "echo hello",
-            halign: default5.Align.CENTER,
-            children: "Welcome to AGS!"
-          }
-        ),
-        /* @__PURE__ */ jsx("box", {}),
-        /* @__PURE__ */ jsx(
-          "button",
-          {
-            onClick: () => print("hello"),
-            halign: default5.Align.CENTER,
-            children: /* @__PURE__ */ jsx("label", { label: time() })
-          }
-        )
-      ] })
-    }
-  );
-}
-
 // ../../../../nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs/src/gobject.ts
 import GObject from "gi://GObject";
 var gobject_default = GObject;
@@ -844,38 +773,6 @@ function property(declaration = Object) {
     }
   };
 }
-function signal(declaration, ...params) {
-  return function(target, signal2, desc) {
-    target.constructor[meta] ??= {};
-    target.constructor[meta].Signals ??= {};
-    const name = kebabify2(signal2);
-    if (declaration || params.length > 0) {
-      const arr = [declaration, ...params].map((v) => v.$gtype);
-      target.constructor[meta].Signals[name] = {
-        param_types: arr
-      };
-    } else {
-      target.constructor[meta].Signals[name] = declaration;
-    }
-    if (!desc) {
-      Object.defineProperty(target, signal2, {
-        value: function(...args) {
-          this.emit(name, ...args);
-        }
-      });
-    } else {
-      const og = desc.value;
-      desc.value = function(...args) {
-        this.emit(name, ...args);
-      };
-      Object.defineProperty(target, `on_${name.replace("-", "_")}`, {
-        value: function(...args) {
-          return og(...args);
-        }
-      });
-    }
-  };
-}
 function pspec(name, flags, declaration) {
   if (declaration instanceof ParamSpec)
     return declaration;
@@ -911,22 +808,45 @@ function defaultValue(declaration) {
 // service/niri.ts
 import GLib from "gi://GLib?version=2.0";
 import Gio3 from "gi://Gio?version=2.0";
-import Hyprland from "gi://AstalHyprland";
-var hyprland = Hyprland.get_default();
-for (const client of hyprland.get_clients()) {
-  console.log(client.title);
-}
+var _state;
 var Niri = class extends gobject_default.Object {
   constructor() {
     super();
-    this.connectSocket();
+    __privateAdd(this, _state);
+    __privateSet(this, _state, {
+      workspaces: /* @__PURE__ */ new Map(),
+      windows: /* @__PURE__ */ new Map()
+    });
+    this.listenEventStream();
   }
-  connectSocket() {
+  get workspacesWithWindows() {
+    const wsmap = {};
+    for (const win of __privateGet(this, _state).windows.values()) {
+      const ws = __privateGet(this, _state).workspaces.get(win.workspace_id);
+      if (!ws) {
+        continue;
+      }
+      const output = ws.output;
+      if (!(output in wsmap)) {
+        wsmap[output] = { output, workspaces: {} };
+      }
+      if (!(win.workspace_id in wsmap[output].workspaces)) {
+        wsmap[output].workspaces[win.workspace_id] = { ...ws, windows: [] };
+      }
+      wsmap[output].workspaces[win.workspace_id].windows.push(win);
+    }
+    return wsmap;
+  }
+  newConnection() {
     const path = GLib.getenv("NIRI_SOCKET");
     const client = new Gio3.SocketClient().connect(new Gio3.UnixSocketAddress({ path }), null);
+    return client;
+  }
+  listenEventStream() {
+    const client = this.newConnection();
     client.get_output_stream().write(JSON.stringify("EventStream") + "\n", null);
     const inputstream = new Gio3.DataInputStream({
-      // closeBaseStream: true,
+      closeBaseStream: true,
       baseStream: client.get_input_stream()
     });
     this.readLineSocket(inputstream, (stream, result) => {
@@ -935,7 +855,10 @@ var Niri = class extends gobject_default.Object {
         return;
       }
       const line = stream.read_line_finish(result)[0] ?? new Uint8Array([]);
-      console.log(new TextDecoder().decode(line));
+      const text = new TextDecoder().decode(line);
+      console.log(text);
+      const message = JSON.parse(text);
+      this.reconcileState(message);
     });
   }
   readLineSocket(inputstream, callback) {
@@ -947,22 +870,195 @@ var Niri = class extends gobject_default.Object {
       this.readLineSocket(stream, callback);
     });
   }
+  reconcileState(message) {
+    if ("WorkspacesChanged" in message) {
+      this.reconcileWorkspacesChanged(message.WorkspacesChanged.workspaces);
+    }
+    if ("WorkspaceActivated" in message) {
+      this.reconcileWorkspaceActivated(message.WorkspaceActivated);
+    }
+    if ("WorkspaceActiveWindowChanged" in message) {
+      this.reconcileWorkspaceActiveWindowChanged(message.WorkspaceActiveWindowChanged);
+    }
+    if ("WindowsChanged" in message) {
+      this.reconcileWindowsChanged(message.WindowsChanged.windows);
+    }
+    if ("WindowOpenedOrChanged" in message) {
+      this.reconcileWindowOpenedOrChanged(message.WindowOpenedOrChanged.window);
+    }
+    if ("WindowClosed" in message) {
+      this.reconcileWindowClosed(message.WindowClosed);
+    }
+    if ("WindowFocusChanged" in message) {
+      this.reconcileWindowFocusChanged(message.WindowFocusChanged);
+    }
+    this.notify("workspacesWithWindows");
+  }
+  reconcileWorkspacesChanged(workspaces) {
+    __privateGet(this, _state)["workspaces"] = new Map(workspaces.map((ws) => [ws.idx, {
+      id: ws.id,
+      idx: ws.idx,
+      name: ws.name,
+      output: ws.output,
+      active_window_id: ws.active_window_id,
+      is_focused: ws.is_focused,
+      is_active: ws.is_active
+    }]));
+  }
+  reconcileWorkspaceActivated(workspaceActivated) {
+    const id = workspaceActivated.id;
+    const focused = workspaceActivated.focused;
+    const workspace = __privateGet(this, _state).workspaces.get(id);
+    if (!workspace) {
+      console.warn(`Workspace ID ${id} not found in state`);
+      return;
+    }
+    const output = workspace.output;
+    __privateGet(this, _state).workspaces = new Map(Array.from(__privateGet(this, _state).workspaces, ([key, ws]) => {
+      if (ws.output == output) {
+        return [key, { ...ws, is_active: focused && id === ws.id }];
+      }
+      return [key, ws];
+    }));
+  }
+  reconcileWorkspaceActiveWindowChanged(workspaceActiveWindowChanged) {
+    const id = workspaceActiveWindowChanged.workspace_id;
+    const active_window_id = workspaceActiveWindowChanged.active_window_id;
+    const workspace = __privateGet(this, _state).workspaces.get(id);
+    if (!workspace) {
+      console.warn(`Workspace ID ${id} not found in state`);
+      return;
+    }
+    workspace.active_window_id = active_window_id;
+  }
+  reconcileWindowsChanged(windows) {
+    __privateGet(this, _state).windows = new Map(windows.map((w) => [w.id, {
+      id: w.id,
+      title: w.title,
+      app_id: w.app_id,
+      workspace_id: w.workspace_id,
+      is_focused: w.is_focused
+    }]));
+  }
+  reconcileWindowOpenedOrChanged(window) {
+    if (!__privateGet(this, _state).windows.has(window.id)) {
+      __privateGet(this, _state).windows.set(window.id, window);
+    }
+    if (window.is_focused) {
+      __privateGet(this, _state).windows.forEach((window2, key) => {
+        if (key != window2.id) {
+          window2.is_focused = false;
+        }
+      });
+    }
+  }
+  reconcileWindowClosed(windowClosed) {
+    __privateGet(this, _state).windows.delete(windowClosed.id);
+  }
+  reconcileWindowFocusChanged(windowFocusChanged) {
+    const window = __privateGet(this, _state).windows.get(windowFocusChanged.id);
+    if (!window) {
+      console.warn(`Cannot find window with ID ${windowFocusChanged.id} in the state`);
+      return;
+    }
+    __privateGet(this, _state).windows.forEach((win, key) => {
+      win.is_focused = key === windowFocusChanged.id;
+    });
+  }
 };
+_state = new WeakMap();
 __decorateClass([
-  property(String)
-], Niri.prototype, "myProp", 2);
-__decorateClass([
-  signal(String, String)
-], Niri.prototype, "mySignal", 2);
+  property(Object)
+], Niri.prototype, "workspacesWithWindows", 1);
 Niri = __decorateClass([
   register({ GTypeName: "Niri" })
 ], Niri);
 
-// app.ts
+// ../../../../nix/store/v8sihz39sz6dd5q50f5ag13yljzfl22z-astal-0.1.0/share/astal/gjs/src/jsx/jsx-runtime.ts
+function isArrowFunction(func) {
+  return !Object.hasOwn(func, "prototype");
+}
+function jsx(ctor, { children, ...props }) {
+  children ??= [];
+  if (!Array.isArray(children))
+    children = [children];
+  children = children.filter(Boolean);
+  if (children.length === 1)
+    props.child = children[0];
+  else if (children.length > 1)
+    props.children = children;
+  if (typeof ctor === "string") {
+    return new ctors[ctor](props);
+  }
+  if (isArrowFunction(ctor))
+    return ctor(props);
+  return new ctor(props);
+}
+var ctors = {
+  box: Box,
+  button: Button,
+  centerbox: CenterBox,
+  circularprogress: CircularProgress,
+  drawingarea: DrawingArea,
+  entry: Entry,
+  eventbox: EventBox,
+  // TODO: fixed
+  // TODO: flowbox
+  icon: Icon,
+  label: Label,
+  levelbar: LevelBar,
+  // TODO: listbox
+  overlay: Overlay,
+  revealer: Revealer,
+  scrollable: Scrollable,
+  slider: Slider,
+  stack: Stack,
+  switch: Switch,
+  window: Window
+};
+var jsxs = jsx;
+
+// widget/Bar.tsx
 var niri = new Niri();
-niri.connect("my-signal", (niri2, str, num) => {
-  console.log(str, num, niri2);
-});
+var time = Variable("").poll(1e3, "date");
+function Bar(monitor) {
+  return /* @__PURE__ */ jsx(
+    "window",
+    {
+      className: "Bar",
+      monitor,
+      exclusivity: default2.Exclusivity.EXCLUSIVE,
+      anchor: default2.WindowAnchor.TOP | default2.WindowAnchor.LEFT | default2.WindowAnchor.RIGHT,
+      application: application_default,
+      children: /* @__PURE__ */ jsxs("centerbox", { children: [
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClicked: "echo hello",
+            halign: default5.Align.CENTER,
+            children: bind(niri, "workspacesWithWindows").as((ws) => Object.entries(ws).flatMap(([o, owswin]) => owswin).map((owswin) => /* @__PURE__ */ jsx("box", { children: Object.entries(owswin.workspaces).map(([_, ws2]) => /* @__PURE__ */ jsxs("button", { children: [
+              "WS ",
+              ws2.idx,
+              " (",
+              ws2.windows.length,
+              ")"
+            ] })) })))
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: () => print("hello"),
+            halign: default5.Align.CENTER,
+            children: /* @__PURE__ */ jsx("label", { label: time() })
+          }
+        )
+      ] })
+    }
+  );
+}
+
+// app.ts
 application_default.start({
   css: style_default,
   main() {

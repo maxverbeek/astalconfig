@@ -1,8 +1,8 @@
-import GObject, { property, register, signal } from "astal/gobject";
+import GObject, { property, register } from "astal/gobject";
 import GLib from "gi://GLib?version=2.0";
 import Gio from "gi://Gio?version=2.0";
 
-type Workspace = {
+export type Workspace = {
   id: number,
   idx: number,
   name: string | null,
@@ -12,7 +12,7 @@ type Workspace = {
   active_window_id: number | null
 }
 
-type Window = {
+export type Window = {
   id: number,
   title: string | null,
   app_id: string,
@@ -20,18 +20,51 @@ type Window = {
   is_focused: boolean,
 }
 
-type State = {
+export type State = {
   workspaces: Map<number, Workspace>,
   windows: Map<number, Window>
 }
 
+type OutputsWithWorkspacesWithWindows = Record<string, OutputWithWorkspacesWithWindows>
+
+type OutputWithWorkspacesWithWindows = {
+  output: string,
+  workspaces: Record<number, WorkspaceWithWindows>
+}
+
+type WorkspaceWithWindows = Workspace & {
+  windows: Window[]
+}
+
 @register({ GTypeName: 'Niri' })
 export default class Niri extends GObject.Object {
-  @property(String)
-  declare myProp: string
 
-  @signal(String, String)
-  declare mySignal: (a: string, b: string) => void
+  @property(Object)
+  get outputs(): OutputsWithWorkspacesWithWindows {
+    const wsmap: OutputsWithWorkspacesWithWindows = {}
+
+    for (const win of this.#state.windows.values()) {
+      const ws = this.#state.workspaces.get(win.workspace_id)
+
+      if (!ws) {
+        continue
+      }
+
+      const output = ws.output
+
+      if (!(output in wsmap)) {
+        wsmap[output] = { output: output, workspaces: {} }
+      }
+
+      if (!(win.workspace_id in wsmap[output].workspaces)) {
+        wsmap[output].workspaces[win.workspace_id] = { ...ws, windows: [] }
+      }
+
+      wsmap[output].workspaces[win.workspace_id].windows.push(win)
+    }
+
+    return wsmap
+  }
 
   #state: State
 
@@ -120,6 +153,8 @@ export default class Niri extends GObject.Object {
     if ('WindowFocusChanged' in message) {
       this.reconcileWindowFocusChanged(message.WindowFocusChanged)
     }
+
+    this.notify('outputs')
   }
 
   private reconcileWorkspacesChanged(workspaces: Workspace[]) {
@@ -181,9 +216,7 @@ export default class Niri extends GObject.Object {
   }
 
   private reconcileWindowOpenedOrChanged(window: Window) {
-    if (!this.#state.windows.has(window.id)) {
-      this.#state.windows.set(window.id, window)
-    }
+    this.#state.windows.set(window.id, window)
 
     if (window.is_focused) {
       this.#state.windows.forEach((window, key) => {
