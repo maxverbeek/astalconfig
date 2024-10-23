@@ -14,3 +14,7 @@ window.Bar button {
     border-radius: 8px;
     margin: 2px;
 }
+
+.text-white {
+  color: white;
+}
