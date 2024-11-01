@@ -6,8 +6,6 @@ window.Bar {
 
 window.Bar>centerbox {
     background: @theme_bg_color;
-    border-radius: 10px;
-    margin: 8px;
 }
 
 window.Bar button {
@@ -15,6 +13,25 @@ window.Bar button {
     margin: 2px;
 }
 
+.BluetoothMenu {
+  background: transparent;
+  color: white;
+}
+
+.BluetoothMenu > box {
+  background-color: rgba(0, 0, 0, .4);
+  margin: 10px;
+  min-width: 300px;
+}
+
+window.BluetoothMenu > label {
+  color: white;
+}
+
 .text-white {
   color: white;
+}
+
+.Workspaces icon {
+  margin: 0 5px;
 }

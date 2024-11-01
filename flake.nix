@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs";
     utils.url = "github:numtide/flake-utils";
-    ags.url = "github:Aylur/ags?ref=v2";
+    ags.url = "github:Aylur/ags/v2";
     ags.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -17,12 +17,23 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+
+        dev = pkgs.writeScriptBin "dev" ''
+          #!/usr/bin/env zsh
+
+          while ${pkgs.inotify-tools}/bin/inotifywait -e CREATE -r .; do
+            ags -q && ags --config ./ &
+          done
+        '';
       in
       {
         devShell = pkgs.mkShell {
           name = "devshell";
           packages = [
-            (ags.packages.${system}.ags.override { extraPackages = [ ags.packages.${system}.hyprland ]; })
+            ags.packages.${system}.agsFull
+            ags.packages.${system}.io
+            pkgs.inotify-tools
+            dev
           ];
           #
           # propagatedBuildInputs = [

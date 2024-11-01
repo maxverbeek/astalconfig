@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1728757310,
-        "narHash": "sha256-9dHcb8USXQpeZQvqNxM8RZXVoXM+VuX76GCKSRCNPCM=",
+        "lastModified": 1729613005,
+        "narHash": "sha256-OktngqE4JF3GHLOureXJaVHBGKe2R+OvaqB43RBTCgM=",
         "owner": "Aylur",
         "repo": "ags",
-        "rev": "58386466ddd7fccb205932e907f8c2b6c907362c",
+        "rev": "9fe75a1efaf43a1948460b123d870b71ab7c896e",
         "type": "github"
       },
       "original": {
@@ -27,11 +27,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1728682216,
-        "narHash": "sha256-0Cn5iwh6vf9/Z29jZ9tmQ+Hz8KS/ftgYT/mFSXeak3I=",
+        "lastModified": 1729612926,
+        "narHash": "sha256-nqxvYZk4xHWAYnSrniyyx1dp8J2Vpg7XMPcZj4cvyaY=",
         "owner": "aylur",
         "repo": "astal",
-        "rev": "dd3bae59362f0b6c3d47cc81b5c53888362e75fc",
+        "rev": "004b12381b3891836ecbf3bb22aa3054145e3f38",
         "type": "github"
       },
       "original": {
@@ -58,10 +58,10 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1728328465,
-        "narHash": "sha256-a0a0M1TmXMK34y3M0cugsmpJ4FJPT/xsblhpiiX1CXo=",
-        "path": "/nix/store/a2gnsay8asfn2kqghz12nhw196cnmf8h-source",
-        "rev": "1bfbbbe5bbf888d675397c66bfdb275d0b99361c",
+        "lastModified": 1730137625,
+        "narHash": "sha256-9z8oOgFZiaguj+bbi3k4QhAD6JabWrnv7fscC/mt0KE=",
+        "path": "/nix/store/vpzg5qjqwl76ichhjwwgmwc8v3j369q5-source",
+        "rev": "64b80bfb316b57cdb8919a9110ef63393d74382a",
         "type": "path"
       },
       "original": {
