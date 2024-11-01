@@ -3,7 +3,8 @@ import DateTime from "../widgets/DateTime"
 import Audio from "../widgets/Audio"
 import Bluetooth from "../widgets/Bluetooth"
 import Workspaces from "../widgets/Workspaces"
-import IconTest from "../widgets/IconTest"
+import Tray from "../widgets/Tray"
+import Media from "../widgets/Media"
 
 export default function Bar(monitor: Gdk.Monitor) {
   return <window
@@ -18,10 +19,13 @@ export default function Bar(monitor: Gdk.Monitor) {
       <box hexpand halign={Gtk.Align.START}>
         <Workspaces onlyForOutput={monitor.manufacturer}></Workspaces>
       </box>
-      <box hexpand>Center</box>
+      <box hexpand>
+        <Media />
+      </box>
       <box hexpand halign={Gtk.Align.END}>
-        <Bluetooth />
         <Audio />
+        <Bluetooth />
+        <Tray />
         <DateTime />
       </box>
     </centerbox>

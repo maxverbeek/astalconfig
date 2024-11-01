@@ -1,5 +1,6 @@
 import { bind } from "astal"
 import Niri, { Window } from "../service/niri"
+
 const niri = new Niri()
 
 function appnames(windows: Window[]) {
@@ -26,6 +27,10 @@ function guessAppIcon(window: Window) {
 
   if (window.app_id === '1Password') {
     return '1password'
+  }
+
+  if (window.app_id === 'Slack') {
+    return 'slack'
   }
 
   // default custom icon from lucide
@@ -59,12 +64,14 @@ export default function Workspaces({ onlyForOutput }: { onlyForOutput: string })
             traits.push('populated')
           }
 
+          const className = traits.join(' ')
+
           if (!ws.is_active) {
-            return <button className={traits.join(' ')}>{ws.idx}</button>
+            return <button className={className}>{ws.idx}</button>
           }
 
-          return <button className={traits.join(' ')}>
-            <box>
+          return <button className={className}>
+            <box spacing={5}>
               <label className="ws-idx" label={ws.idx.toString()} />
               {ws.windows.map(win => <icon icon={guessAppIcon(win)} />)}
             </box>
