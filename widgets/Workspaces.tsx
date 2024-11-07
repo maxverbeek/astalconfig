@@ -1,4 +1,4 @@
-import { App, Gdk, astalify } from "astal/gtk3"
+import { App, Gdk } from "astal/gtk3"
 import { Variable, bind } from "astal"
 import Niri, { OutputsWithWorkspacesWithWindows, Window, WorkspaceWithWindows } from "../service/niri"
 
@@ -41,7 +41,6 @@ function guessAppIcon(window: Window) {
 }
 
 function Workspace(workspace: WorkspaceWithWindows) {
-  console.log(`drawing workspace ${workspace.output} ${workspace.idx}`)
   const traits = []
   if (workspace.is_active) {
     traits.push('active')
@@ -54,10 +53,10 @@ function Workspace(workspace: WorkspaceWithWindows) {
   const className = traits.join(' ')
 
   if (!workspace.is_active) {
-    return <button className={className}>{workspace.idx}</button>
+    return <button onClick={() => niri.focusWorkspaceId(workspace.id)} className={className}>{workspace.idx}</button>
   }
 
-  return <button className={className}>
+  return <button onClick={() => niri.focusWorkspaceId(workspace.id)} className={className}>
     <box spacing={5}>
       <label className="ws-idx" label={workspace.idx.toString()} />
       {workspace.windows.map(win => <icon icon={guessAppIcon(win)} />)}

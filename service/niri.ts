@@ -97,6 +97,15 @@ export default class Niri extends GObject.Object {
     this.listenEventStream()
   }
 
+  public focusWorkspaceId(id: number) {
+    const msg = { Action: { FocusWorkspace: { reference: { Id: id } } } }
+    const result = JSON.parse(this.oneOffCommand(JSON.stringify(msg)))
+
+    if (!("Ok" in result)) {
+      console.warn(`[NIRI] switching to workspace ID ${id} failed`, result)
+    }
+  }
+
   public reloadMonitors() {
     this.#state.monitors = this.getMonitors()
 
@@ -122,7 +131,7 @@ export default class Niri extends GObject.Object {
       baseStream: client.get_input_stream()
     })
 
-    const [response, count] = inputstream.read_line_utf8(null)
+    const [response, _count] = inputstream.read_line_utf8(null)
 
     inputstream.close(null)
 
