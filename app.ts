@@ -1,4 +1,4 @@
-import style from "inline:./style.css"
+import style from "inline:./style.scss"
 import { App, Gdk, Gtk } from "astal/gtk3"
 import Bar from "./windows/Bar"
 import BluetoothMenu from "./windows/BluetoothMenu"
