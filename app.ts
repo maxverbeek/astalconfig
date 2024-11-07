@@ -2,6 +2,7 @@ import style from "inline:./style.css"
 import { App, Gdk, Gtk } from "astal/gtk3"
 import Bar from "./windows/Bar"
 import BluetoothMenu from "./windows/BluetoothMenu"
+import Applauncher from "./windows/Applauncher"
 
 App.start({
   icons: `./icons`,
@@ -14,7 +15,20 @@ App.start({
     }
 
     App.connect("monitor-added", (_, gdkmonitor) => {
-      bars.set(gdkmonitor, Bar(gdkmonitor))
+      const addLater = () => {
+        if (gdkmonitor.manufacturer) {
+          bars.set(gdkmonitor, Bar(gdkmonitor))
+          return
+        }
+
+        // I've noticed that the manufacturer is not set after turning on a monitor. This is a nasty workaround
+        // because signals do not seem to work here. I think it could have something to do with niri only
+        // setting this information after a little while
+        console.log('Manufacturer was null, checking again in 500ms')
+        setTimeout(addLater, 500)
+      }
+
+      addLater()
     })
 
     App.connect("monitor-removed", (_, gdkmonitor) => {
@@ -22,6 +36,7 @@ App.start({
       bars.delete(gdkmonitor)
     })
 
+    const applauncher = Applauncher()
     const btmenu = BluetoothMenu()
   },
 })

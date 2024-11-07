@@ -27,6 +27,8 @@
         '';
       in
       {
+        packages.ags = ags.packages.${system}.agsFull;
+
         devShell = pkgs.mkShell {
           name = "devshell";
           packages = [

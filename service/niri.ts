@@ -20,20 +20,35 @@ export type Window = {
   is_focused: boolean,
 }
 
-export type State = {
-  workspaces: Map<number, Workspace>,
-  windows: Map<number, Window>
+export type Monitor = {
+  name: string
+  make: string
+  model: string
+  serial: string
 }
 
-type OutputsWithWorkspacesWithWindows = Record<string, OutputWithWorkspacesWithWindows>
+export type State = {
+  workspaces: Map<number, Workspace>,
+  windows: Map<number, Window>,
+  monitors: Map<string, Monitor>
+}
 
-type OutputWithWorkspacesWithWindows = {
+export type OutputsWithWorkspacesWithWindows = Record<string, OutputWithWorkspacesWithWindows>
+
+export type OutputWithWorkspacesWithWindows = {
   output: string,
+  monitor: Monitor | null,
   workspaces: Record<number, WorkspaceWithWindows>
 }
 
-type WorkspaceWithWindows = Workspace & {
+export type WorkspaceWithWindows = Workspace & {
   windows: Window[]
+}
+
+type ResponseOutputs = {
+  Ok: {
+    Outputs: Record<string, Monitor>
+  }
 }
 
 @register({ GTypeName: 'Niri' })
@@ -51,9 +66,10 @@ export default class Niri extends GObject.Object {
       }
 
       const output = ws.output
+      const monitor = this.#state.monitors.get(output) ?? null
 
       if (!(output in wsmap)) {
-        wsmap[output] = { output: output, workspaces: {} }
+        wsmap[output] = { output: output, workspaces: {}, monitor }
       }
 
       if (!(win.workspace_id in wsmap[output].workspaces)) {
@@ -74,9 +90,19 @@ export default class Niri extends GObject.Object {
     this.#state = {
       workspaces: new Map(),
       windows: new Map(),
+      monitors: new Map(),
     }
 
+    this.reloadMonitors()
     this.listenEventStream()
+  }
+
+  public reloadMonitors() {
+    this.#state.monitors = this.getMonitors()
+
+    console.log('[NIRI] reloaded monitors', Object.fromEntries(this.#state.monitors))
+
+    this.notify('outputs')
   }
 
   private newConnection(): Gio.SocketConnection {
@@ -84,6 +110,41 @@ export default class Niri extends GObject.Object {
     const client = new Gio.SocketClient().connect(new Gio.UnixSocketAddress({ path }), null)
 
     return client
+  }
+
+  private oneOffCommand(jsonEncodedCommand: string): string {
+    const client = this.newConnection()
+
+    client.get_output_stream().write(jsonEncodedCommand + "\n", null)
+
+    const inputstream = new Gio.DataInputStream({
+      closeBaseStream: true,
+      baseStream: client.get_input_stream()
+    })
+
+    const [response, count] = inputstream.read_line_utf8(null)
+
+    inputstream.close(null)
+
+    if (!response) {
+      console.warn(`[NIRI] received empty response when calling command ${jsonEncodedCommand}`)
+      return ""
+    }
+
+    return response
+  }
+
+  private getMonitors(): Map<string, Monitor> {
+    const resp = this.oneOffCommand(JSON.stringify("Outputs"))
+
+    if (resp === "") {
+      return new Map()
+    }
+
+    const parsed = JSON.parse(resp) as ResponseOutputs
+    const outputs = parsed.Ok.Outputs
+
+    return new Map(Object.values(outputs).map(({ name, make, model, serial }) => [name, { name, make, model, serial }]))
   }
 
   private listenEventStream() {
