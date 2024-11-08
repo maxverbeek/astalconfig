@@ -1,0 +1,49 @@
+@use "./style/colours" as *;
+@use "./style/utils";
+
+window#bar {
+  background-color: $bg-color-darker;
+
+  .Workspaces {
+    .workspace {
+      @include utils.reset-button;
+      @include utils.pill-button;
+    }
+  }
+
+  .Audio {
+    button {
+      @include utils.reset-button;
+      @include utils.pill-button;
+    }
+  }
+
+  .Bluetooth {
+    @include utils.reset-button;
+    @include utils.pill-button;
+  }
+
+  .Tray {
+    @include utils.pill-button;
+
+    button {
+      @include utils.reset-button;
+      border-radius: 500px;
+
+      &:hover {
+        background-color: lighten($bg-color, 10%);
+      }
+    }
+  }
+
+  .DateTime {
+    @include utils.pill-button;
+    padding: 0 .4rem;
+    // background-color: lighten($bg-color, 10%);
+    background-color: transparent;
+
+    .time {
+      font-weight: bold;
+    }
+  }
+}

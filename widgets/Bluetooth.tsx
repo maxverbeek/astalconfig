@@ -3,6 +3,7 @@ import { App } from "astal/gtk3"
 export default function Bluetooth() {
 
   return <button
+    className="Bluetooth"
     onClick={(self) => {
       App.toggle_window('bluetooth')
     }}>

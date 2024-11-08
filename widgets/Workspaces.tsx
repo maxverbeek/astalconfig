@@ -40,8 +40,8 @@ function guessAppIcon(window: Window) {
   return 'circle-dashed'
 }
 
-function Workspace(workspace: WorkspaceWithWindows) {
-  const traits = []
+function Workspace(workspace: WorkspaceWithWindows, showInactiveIcons: boolean) {
+  const traits = ['workspace']
   if (workspace.is_active) {
     traits.push('active')
   }
@@ -51,24 +51,27 @@ function Workspace(workspace: WorkspaceWithWindows) {
   }
 
   const className = traits.join(' ')
-
-  if (!workspace.is_active) {
-    return <button onClick={() => niri.focusWorkspaceId(workspace.id)} className={className}>{workspace.idx}</button>
-  }
+  const showIcons = (workspace.is_active || showInactiveIcons) && workspace.windows.length > 0
 
   return <button onClick={() => niri.focusWorkspaceId(workspace.id)} className={className}>
-    <box spacing={5}>
+    <box spacing={showIcons ? 5 : 0}>
       <label className="ws-idx" label={workspace.idx.toString()} />
-      {workspace.windows.map(win => <icon icon={guessAppIcon(win)} />)}
+      {showIcons && workspace.windows.map(win => <icon icon={guessAppIcon(win)} />)}
     </box>
   </button>
 }
 
-export default function Workspaces({ forMonitor }: { forMonitor: Gdk.Monitor }) {
+export type WorkspacesProps = {
+  forMonitor: Gdk.Monitor
+  showInactiveIcons?: boolean
+}
+
+export default function Workspaces({ forMonitor, showInactiveIcons = false }: WorkspacesProps) {
   const filterWorkspacesForMonitor = (outputs: OutputsWithWorkspacesWithWindows, monitorMake: string) => {
     return Object.values(outputs)
       .filter(o => o.monitor?.make === monitorMake)
       .flatMap(o => Object.values(o.workspaces))
+      .sort((a, b) => a.idx - b.idx)
   }
 
   // The two binds with a derived variable are because I noticed that when turning montors off and on, the manufacturer
@@ -81,6 +84,6 @@ export default function Workspaces({ forMonitor }: { forMonitor: Gdk.Monitor }) 
   const workspacesForMe = Variable.derive([outputs, monitorMake], filterWorkspacesForMonitor)
 
   return <box className="Workspaces">
-    {workspacesForMe(ws => ws.map(Workspace))}
+    {workspacesForMe(ws => ws.map(w => Workspace(w, showInactiveIcons)))}
   </box>
 }

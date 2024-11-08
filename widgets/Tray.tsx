@@ -5,7 +5,7 @@ import { bind } from "astal";
 export default function Tray() {
   const tray = AstalTray.get_default()
 
-  return <box>
+  return <box className="Tray">
     {bind(tray, "items").as(items => items.map(item => {
       const menu = item.create_menu()
       return <button

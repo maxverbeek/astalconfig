@@ -17,6 +17,7 @@ export default function Audio() {
     onHover={() => revealed.set(true)}
     onHoverLost={() => revealed.set(false)}
     hexpand
+    className="Audio"
   ><box>
       <Gtk.Revealer
         visible

@@ -8,6 +8,7 @@ import Media from "../widgets/Media"
 
 export default function Bar(monitor: Gdk.Monitor) {
   return <window
+    name="bar"
     className="Bar"
     gdkmonitor={monitor}
     exclusivity={Astal.Exclusivity.EXCLUSIVE}
@@ -16,13 +17,13 @@ export default function Bar(monitor: Gdk.Monitor) {
       | Astal.WindowAnchor.RIGHT}
     application={App}>
     <centerbox>
-      <box hexpand halign={Gtk.Align.START}>
-        <Workspaces forMonitor={monitor}></Workspaces>
+      <box className="left" hexpand halign={Gtk.Align.START}>
+        <Workspaces forMonitor={monitor} showInactiveIcons></Workspaces>
       </box>
-      <box hexpand>
+      <box className="center" hexpand>
         <Media />
       </box>
-      <box hexpand halign={Gtk.Align.END}>
+      <box className="right" hexpand halign={Gtk.Align.END}>
         <Audio />
         <Bluetooth />
         <Tray />
