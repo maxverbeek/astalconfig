@@ -16,11 +16,26 @@ window#bar {
       @include utils.reset-button;
       @include utils.pill-button;
     }
+
+    &.deafened button {
+      color: $c-red;
+      // my Papirus icon has opacity set to 0.35 for the muted icon. Unfortunately
+      // this cannot be changed, as the inline style through which that is set takes precedence.
+      opacity: 1.0; 
+    }
   }
 
   .Bluetooth {
     @include utils.reset-button;
     @include utils.pill-button;
+   
+    &.connected {
+      background-color: $c-blue;
+
+      image, label {
+        color: $fg-color;
+      }
+    }
   }
 
   .Tray {

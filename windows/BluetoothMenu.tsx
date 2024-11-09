@@ -1,6 +1,20 @@
-import { App, Astal, Gtk } from "astal/gtk3"
+import GObject from "gi://GObject"
+import { App, Astal, ConstructProps, Gtk, astalify } from "astal/gtk3"
 import { bind } from "astal"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
+
+// subclass, register, define constructor props
+class Spinner extends astalify(Gtk.Spinner) {
+  static { GObject.registerClass(this) }
+
+  constructor(props: ConstructProps<
+    Spinner,
+    Gtk.Spinner.ConstructorProps,
+    {}
+  >) {
+    super(props as any)
+  }
+}
 
 function BtStatus() {
   const bt = AstalBluetooth.get_default()
@@ -16,17 +30,33 @@ type DeviceProps = {
 
 function Device({ device }: DeviceProps) {
   return <box className="btdevice">
-    <button hexpand onClick={() => device.connect_device((result) => console.log(result))}>
+    <button
+      className="connect"
+      cursor="pointer"
+      hexpand
+      onClick={() => device.connect_device((result) => console.log(result))}
+    >
       <box hexpand>
         <icon icon={device.icon}></icon>
         {bind(device, "alias").as(alias => <label hexpand xalign={0} label={alias}></label>)}
-        {bind(device, "connecting").as(c => <Gtk.Spinner active visible={c}></Gtk.Spinner>)}
+        <Spinner
+          visible={bind(device, "connecting")}
+          setup={(self) => {
+            bind(device, "connecting").subscribe(connecting => {
+              connecting ? self.start() : self.stop()
+            })
+          }}
+        ></Spinner>
       </box>
     </button>
-    {bind(device, "connected").as(v => v && <button onClick={() => device.disconnect_device((result) => console.log(result))}>
-      <icon icon="window-close"></icon>
+    <button
+      className="disconnect"
+      cursor="pointer"
+      visible={bind(device, "connected")}
+      onClick={() => device.disconnect_device((result) => console.log(result))}
+    >
+      <icon icon="window-close-symbolic"></icon>
     </button>
-    )}
   </box>
 }
 
@@ -39,9 +69,8 @@ export default function BluetoothMenu() {
     setup={(self) => App.add_window(self)}
     visible={false}
     anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}>
-    <box orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.START}>
+    <box widthRequest={400} orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.START}>
       <label label="Bluetooth" xalign={0} />
-      {!bt.is_connected && <label xalign={0} label="disconnected" />}
       <BtStatus />
     </box>
   </window>

@@ -32,17 +32,18 @@ export default function Applauncher() {
     executableMultiplier: 2,
     entryMultiplier: 2
   })
-  const list = Variable(apps.fuzzy_query("").slice(0, MAX_ITEMS))
-  const hide = () => App.get_window("launcher")!.hide()
 
-  function search(text: string) {
-    list.set(apps.fuzzy_query(text).slice(0, MAX_ITEMS))
+  const query = Variable("")
+  const list = query(q => apps.fuzzy_query(q).slice(0, MAX_ITEMS))
+  const hide = () => {
+    if (App.get_window('launcher')?.visible) {
+      App.toggle_window("launcher")
+    }
   }
 
   function openfirst() {
     const first = list.get()[0]
-    if (first) {
-      first.launch()
+    if (first && first.launch()) {
       hide()
     }
   }
@@ -53,33 +54,27 @@ export default function Applauncher() {
     keymode={Astal.Keymode.ON_DEMAND}
     application={App}
     visible={false}
-    onShow={() => list.set(apps.get_list().slice(0, MAX_ITEMS))}
-    onKeyPressEvent={function(self, event: Gdk.Event) {
-      if (event.get_keyval()[1] === Gdk.KEY_Escape)
-        App.toggle_window(self.name)
+    onShow={() => query.set("")}
+    onKeyPressEvent={function(_self, event: Gdk.Event) {
+      if (event.get_keyval()[1] === Gdk.KEY_Escape) {
+        hide()
+      }
     }}>
     <box>
       <box hexpand={false} vertical>
         <box widthRequest={500} className="Applauncher" vertical>
           <entry
             placeholderText="Search"
-            onChanged={({ text }) => search(text)}
+            onChanged={({ text }) => query.set(text)}
             onActivate={() => openfirst()}
-            setup={(self) => {
-              // bit annoying but i cannot get a reference to this entry thingy to reset the text otherwise
-              self.hook(App, 'window-toggled', (_, win) => {
-                if (win.name === 'launcher' && !win.visible) {
-                  self.set_text("")
-                }
-              })
-            }}
+            text={query()}
           />
           <box spacing={6} vertical>
-            {list(list => list.map(app => (
+            {list.as(list => list.map(app => (
               <AppButton app={app} />
             )))}
           </box>
-          <box visible={list(l => l.length === 0)}>
+          <box visible={list.as(l => l.length === 0)}>
             <icon icon="system-search-symbolic" />
             No match found
           </box>

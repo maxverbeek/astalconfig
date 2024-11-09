@@ -9,15 +9,24 @@ export default function Audio() {
   const speaker = audio?.get_default_speaker()!
 
   const volumeText = bind(speaker, "volume").as(vol => `Volume ${Math.floor(vol * 100)}%`)
-  const volumeIcon = bind(speaker, "volume_icon")
+  const volumeIcon = bind(speaker, "volume_icon").as(vol => {
+    console.log(vol)
+
+    return vol
+  })
+  const isMuted = bind(speaker, "mute")
 
   const revealed = Variable(false)
+
+  // discord uses deafened for hearing, muted for speaking. when I add a mic
+  // indicator I'll use the muted class there
+  const className = isMuted.as((m) => m ? "Audio deafened" : "Audio")
 
   return <EventBox
     onHover={() => revealed.set(true)}
     onHoverLost={() => revealed.set(false)}
     hexpand
-    className="Audio"
+    className={className}
   ><box>
       <Gtk.Revealer
         visible

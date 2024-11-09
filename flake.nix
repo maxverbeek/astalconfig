@@ -22,7 +22,8 @@
           #!/usr/bin/env zsh
 
           while ${pkgs.inotify-tools}/bin/inotifywait -e CREATE -r .; do
-            ags -q && ags --config ./ &
+            ags quit
+            ags run &
           done
         '';
       in

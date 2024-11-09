@@ -1,18 +1,12 @@
-@use "sass:string";
-
 @use "colours" as *;
 @use "utils";
-
-@function gtkalpha($c, $a) {
-  @return string.unquote("alpha(#{$c},#{$a})");
-}
 
 window#launcher {
   all: unset;
 
   box.Applauncher {
     background-color: $c-green;
-    border-radius: 11px;
+    border-radius: 1rem;
     margin: 1rem;
     padding: .8rem;
     box-shadow: 2px 3px 8px 0 gtkalpha($bg-color-darker, .4);

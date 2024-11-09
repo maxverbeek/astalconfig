@@ -1,0 +1,53 @@
+@use "colours" as *;
+
+window#bluetooth {
+  >box {
+    margin: 0.6rem;
+    padding: 1rem;
+    background-color: $bg-color-darker;
+    border-radius: 1rem;
+    box-shadow: 2px 3px 8px 0 gtkalpha($bg-color-darker, .4);
+
+    >label {
+      color: $fg-color-darker;
+      margin: 0.5rem 0;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+  }
+  
+  .btdevice {
+    .connect, .disconnect {
+      all: unset;
+      padding: 0.6rem;
+      margin: 0.4rem 0;
+      border-radius: 0.6rem;
+      color: $fg-color;
+    }
+
+    .connect {
+      background-color: lighten($bg-color, 10%);
+
+      &:hover {
+        background-color: lighten($bg-color, 20%);
+      }
+
+      icon {
+        -gtk-icon-style: symbolic; // allows changing color with text color
+        margin-right: 0.4rem;
+        font-size: 1.1rem;
+        color: $c-green;
+      }
+    }
+
+    .disconnect {
+      margin-left: 0.4rem;
+      background-color: $c-red;
+      color: $fg-color;
+
+      &:hover {
+        background-color: $c-red-vibrant;
+      }
+    }
+  }
+}
