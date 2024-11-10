@@ -1,7 +1,8 @@
 import GObject from "gi://GObject"
 import { App, Astal, ConstructProps, Gtk, astalify } from "astal/gtk3"
-import { bind } from "astal"
+import { Variable, bind } from "astal"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
+import AstalWp from "gi://AstalWp?version=0.1"
 
 // subclass, register, define constructor props
 class Spinner extends astalify(Gtk.Spinner) {
@@ -60,6 +61,31 @@ function Device({ device }: DeviceProps) {
   </box>
 }
 
+function Endpoint(endpoint: AstalWp.Endpoint) {
+  return <box>
+    <label label={bind(endpoint, 'description')} />
+    <label label=" [DEFAULT]" visible={bind(endpoint, 'is_default')} />
+  </box>
+}
+
+function AudioStatus() {
+  const audio = AstalWp.get_default()!.audio
+
+  const speakers = bind(audio, 'speakers')
+  const microphones = bind(audio, 'microphones')
+
+  return <box vertical>
+    <box vertical>
+      <label label="speakers"></label>
+      {speakers.as(endpoints => endpoints.map(Endpoint))}
+    </box>
+    <box vertical>
+      <label label="microphones"></label>
+      {microphones.as(endpoints => endpoints.map(Endpoint))}
+    </box>
+  </box>
+}
+
 export default function BluetoothMenu() {
   const bt = AstalBluetooth.get_default()
 
@@ -72,6 +98,8 @@ export default function BluetoothMenu() {
     <box widthRequest={400} orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.START}>
       <label label="Bluetooth" xalign={0} />
       <BtStatus />
+      <label label="Audio" xalign={0} />
+      <AudioStatus />
     </box>
   </window>
 }
