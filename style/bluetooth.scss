@@ -2,7 +2,7 @@
 @use "utils";
 
 window#bluetooth {
-  >box {
+  .AudioBluetoothMenu {
     margin: 0.6rem;
     padding: 1rem;
     background-color: $bg-color-darker;

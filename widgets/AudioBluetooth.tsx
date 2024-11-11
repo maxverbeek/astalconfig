@@ -1,7 +1,7 @@
 import Wireplumber from "gi://AstalWp"
 import { bind } from "astal"
 import { cn } from "../utils/className"
-import { App, Astal, ConstructProps, Gtk, astalify } from "astal/gtk3"
+import { App, Astal, ConstructProps, Gdk, Gtk, astalify } from "astal/gtk3"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
 
 export default function AudioBluetooth() {
@@ -17,12 +17,16 @@ export default function AudioBluetooth() {
 
   return <box className="AudioBluetooth">
     <button
-      onClick={(self, click) => {
+      onClick={(_self, click) => {
         if (click.button === Astal.MouseButton.PRIMARY) {
           speaker.set_mute(!speaker.get_mute())
         } else if (click.button === Astal.MouseButton.SECONDARY) {
           App.toggle_window('bluetooth')
         }
+      }}
+
+      onScroll={(_self, scroll) => {
+        speaker.volume = scroll.delta_y < 0 ? Math.min(1, speaker.volume + 0.02) : Math.max(0, speaker.volume - 0.02)
       }}
     >
       <box>

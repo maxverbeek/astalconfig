@@ -150,12 +150,16 @@ export default function BluetoothMenu() {
     className="BluetoothMenu"
     setup={(self) => App.add_window(self)}
     visible={false}
-    anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}>
-    <box widthRequest={400} orientation={Gtk.Orientation.VERTICAL} halign={Gtk.Align.START}>
-      <label label="Bluetooth" xalign={0} />
-      <BtStatus />
-      <label label="Audio" xalign={0} />
-      <AudioStatus />
-    </box>
+    anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT}>
+    {/* this eventbox supposedly covers the entire screen and makes it so this closes when you click next to the window. However it also
+    triggers when clicking inside of child elements that don't register click events (such as the box) */}
+    <eventbox onClick={() => App.toggle_window('bluetooth')}>
+      <box className="AudioBluetoothMenu" clickThrough={false} vertical valign={Gtk.Align.START} halign={Gtk.Align.END}>
+        <label label="Bluetooth" xalign={0} />
+        <BtStatus />
+        <label label="Audio" xalign={0} />
+        <AudioStatus />
+      </box>
+    </eventbox>
   </window>
 }
