@@ -21,3 +21,58 @@
   }
 }
 
+@mixin menu-button {
+  all: unset;
+  padding: 0.6rem;
+  margin: 0.4rem 0;
+  color: $fg-color;
+  border-radius: 0.6rem;
+
+  background-color: lighten($bg-color, 10%);
+
+  &:hover {
+    background-color: lighten($bg-color, 20%);
+  }
+}
+
+@mixin slider {
+  &.horizontal {
+    all: unset;
+
+    contents > trough {
+      all: unset;
+      transition: all;
+      background-color: lighten($bg-color, 20%);
+
+      transition: min-height;
+      min-height: 1rem;
+      border-radius: 999px;
+
+      slider, progress {
+        all: unset;
+        transition: all 0.2s ease-in-out;
+        min-height: 1rem;
+        min-width: 1rem;
+        border-radius: 999px;
+        margin-left: -1rem;
+      }
+
+      highlight {
+        all: unset;
+        background-color: $c-green;
+        border-radius: 999px;
+      }
+    }
+
+    &.dragging slider, &.dragging progress {
+      box-shadow: 0 0 5px gtkalpha($bg-color-darker, .4);
+      background-color: $c-green-vibrant;
+    }
+
+    &.fine-tune.dragging slider, &.fine-tune.dragging progress {
+      min-width: 1.2rem;
+      min-height: 1.2rem;
+      margin-left: -1.2rem;
+    }
+  }
+}

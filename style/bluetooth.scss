@@ -1,4 +1,5 @@
 @use "colours" as *;
+@use "utils";
 
 window#bluetooth {
   >box {
@@ -18,35 +19,81 @@ window#bluetooth {
   
   .btdevice {
     .connect, .disconnect {
-      all: unset;
-      padding: 0.6rem;
-      margin: 0.4rem 0;
-      border-radius: 0.6rem;
-      color: $fg-color;
+      @include utils.menu-button
     }
 
-    .connect {
-      background-color: lighten($bg-color, 10%);
+    .connect icon {
+      -gtk-icon-style: symbolic; // allows changing color with text color
+      margin-right: 0.4rem;
+      font-size: 1.1rem;
+    }
 
-      &:hover {
-        background-color: lighten($bg-color, 20%);
-      }
+    .connected {
+      font-weight: 600;
+      font-size: 0.9rem;
 
       icon {
-        -gtk-icon-style: symbolic; // allows changing color with text color
-        margin-right: 0.4rem;
-        font-size: 1.1rem;
         color: $c-green;
       }
     }
 
     .disconnect {
-      margin-left: 0.4rem;
+      margin-left: 0.8rem;
       background-color: $c-red;
       color: $fg-color;
 
       &:hover {
         background-color: $c-red-vibrant;
+      }
+    }
+  }
+
+  .audiostatus {
+    .divider {
+      min-height: 1.4rem;
+    }
+
+    >button, .endpoint {
+      @include utils.reset-button;
+      @include utils.menu-button;
+
+      icon {
+        margin-right: 0.5rem;
+      }
+
+      &.default {
+        background-color: $c-green;
+      }
+    }
+
+    .adjuster {
+      margin-bottom: 0.6rem;
+      .volume {
+        text-shadow: none;
+        margin-right: 0.6rem;
+
+        icon {
+          font-size: 1.2rem;
+          margin: 0 0.6rem;
+        }
+      }
+
+      button {
+        all: unset;
+        @include utils.pill-button;
+        margin: 0 0.6rem 0 0;
+        padding: 0.6rem 0.4rem;
+        font-size: 0.9rem;
+        border-radius: 500px;
+        font-weight: 600;
+
+        &.muted {
+          background-color: $c-red;
+        }
+      }
+
+      scale {
+        @include utils.slider
       }
     }
   }

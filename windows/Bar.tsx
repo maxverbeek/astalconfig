@@ -5,6 +5,7 @@ import Bluetooth from "../widgets/Bluetooth"
 import Workspaces from "../widgets/Workspaces"
 import Tray from "../widgets/Tray"
 import Media from "../widgets/Media"
+import AudioBluetooth from "../widgets/AudioBluetooth"
 
 export default function Bar(monitor: Gdk.Monitor) {
   return <window
@@ -24,8 +25,7 @@ export default function Bar(monitor: Gdk.Monitor) {
         <Media />
       </box>
       <box className="right" hexpand halign={Gtk.Align.END}>
-        <Audio />
-        <Bluetooth />
+        <AudioBluetooth />
         <Tray />
         <DateTime />
       </box>

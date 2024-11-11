@@ -1,8 +1,24 @@
 import GObject from "gi://GObject"
-import { App, Astal, ConstructProps, Gtk, astalify } from "astal/gtk3"
+import { App, Astal, ConstructProps, Gdk, Gtk, Widget, astalify } from "astal/gtk3"
 import { Variable, bind } from "astal"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
 import AstalWp from "gi://AstalWp?version=0.1"
+
+import { cn } from "../utils/className"
+
+// this stuff is massively annoying to implement, so I'll just use buttons for each audio option
+class ComboBox extends astalify(Gtk.ComboBox) {
+  static { GObject.registerClass(this) }
+
+  constructor(props: ConstructProps<
+    ComboBox,
+    Gtk.ComboBox.ConstructorProps,
+    {}
+  >) {
+    super(props as any)
+  }
+}
+
 
 // subclass, register, define constructor props
 class Spinner extends astalify(Gtk.Spinner) {
@@ -32,7 +48,7 @@ type DeviceProps = {
 function Device({ device }: DeviceProps) {
   return <box className="btdevice">
     <button
-      className="connect"
+      className={cn('connect', { 'connected': bind(device, 'connected') })()}
       cursor="pointer"
       hexpand
       onClick={() => device.connect_device((result) => console.log(result))}
@@ -62,9 +78,50 @@ function Device({ device }: DeviceProps) {
 }
 
 function Endpoint(endpoint: AstalWp.Endpoint) {
+  const iconName = Variable.derive([bind(endpoint, 'mediaClass'), bind(endpoint, 'mute')], (mediaClass, mute) => {
+    if (mediaClass === AstalWp.MediaClass.AUDIO_SPEAKER) {
+      return mute ? 'audio-volume-muted-symbolic' : 'audio-volume-high-symbolic'
+    }
+
+    if (mediaClass === AstalWp.MediaClass.AUDIO_MICROPHONE) {
+      return mute ? 'microphone-sensitivity-muted-symbolic' : 'microphone-sensitivity-high-symbolic'
+    }
+
+    return 'circle-dashed'
+  })
+
   return <box>
-    <label label={bind(endpoint, 'description')} />
-    <label label=" [DEFAULT]" visible={bind(endpoint, 'is_default')} />
+    <button
+      cursor="pointer"
+      className={cn('endpoint', { 'default': bind(endpoint, 'is_default') })()}
+      onClick={() => endpoint.is_default = true}
+    >
+      <box hexpand>
+        <icon icon={iconName()} />
+        <label label={bind(endpoint, 'description')} />
+      </box>
+    </button>
+  </box>
+}
+
+function Adjuster(endpoint: AstalWp.Endpoint) {
+
+  return <box className="adjuster">
+    <button
+      cursor="pointer"
+      className={cn({ 'muted': bind(endpoint, 'mute') })()}
+      onClick={() => endpoint.mute = !endpoint.mute}
+    >
+      <box className="volume">
+        <icon icon={bind(endpoint, 'volumeIcon')} />
+        <label label={bind(endpoint, 'volume').as(v => `${Math.floor(v * 100)}%`)} />
+      </box>
+    </button>
+    <slider
+      hexpand
+      onDragged={({ value }) => endpoint.volume = value}
+      value={bind(endpoint, "volume")}
+    />
   </box>
 }
 
@@ -74,21 +131,20 @@ function AudioStatus() {
   const speakers = bind(audio, 'speakers')
   const microphones = bind(audio, 'microphones')
 
-  return <box vertical>
-    <box vertical>
-      <label label="speakers"></label>
+  return <box vertical className="audiostatus">
+    <box vertical className="speakers">
+      {Adjuster(audio.default_speaker)}
       {speakers.as(endpoints => endpoints.map(Endpoint))}
     </box>
-    <box vertical>
-      <label label="microphones"></label>
+    <box className="divider" />
+    <box vertical className="microphones">
+      {Adjuster(audio.default_microphone)}
       {microphones.as(endpoints => endpoints.map(Endpoint))}
     </box>
   </box>
 }
 
 export default function BluetoothMenu() {
-  const bt = AstalBluetooth.get_default()
-
   return <window
     name="bluetooth"
     className="BluetoothMenu"

@@ -11,29 +11,27 @@ window#bar {
     }
   }
 
-  .Audio {
-    button {
-      @include utils.reset-button;
-      @include utils.pill-button;
-    }
-
-    &.deafened button {
-      color: $c-red;
-      // my Papirus icon has opacity set to 0.35 for the muted icon. Unfortunately
-      // this cannot be changed, as the inline style through which that is set takes precedence.
-      opacity: 1.0; 
-    }
-  }
-
-  .Bluetooth {
+  .AudioBluetooth button {
     @include utils.reset-button;
     @include utils.pill-button;
-   
-    &.connected {
-      background-color: $c-blue;
 
-      image, label {
-        color: $fg-color;
+    padding: 0;
+
+    icon {
+      margin: 0;
+      border-radius: 9999px;
+      min-height: 32px;
+      min-width: 32px;
+
+      &.muted {
+        color: $c-red;
+        // my Papirus icon has opacity set to 0.35 for the muted icon. Unfortunately
+        // this cannot be changed, as the inline style through which that is set takes precedence.
+        opacity: 1.0; 
+      }
+
+      &.Bluetooth.connected {
+        background-color: $c-blue;
       }
     }
   }
