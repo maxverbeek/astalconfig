@@ -49,9 +49,6 @@ window#bluetooth {
   }
 
   .audiostatus {
-    .divider {
-      min-height: 1.4rem;
-    }
 
     >button, .endpoint {
       @include utils.reset-button;
@@ -67,33 +64,47 @@ window#bluetooth {
     }
 
     .adjuster {
-      margin-bottom: 0.6rem;
-      .volume {
-        text-shadow: none;
-        margin-right: 0.6rem;
 
-        icon {
-          font-size: 1.2rem;
-          margin: 0 0.6rem;
+      // equal spacing between the buttons and the slider
+      .mute {
+        margin-left: 0;
+        margin-right: 0.6rem;
+      }
+      .expander {
+        margin-left: 0.6rem;
+      }
+
+      scale {
+        @include utils.slider;
+      }
+
+      .volume {
+        padding: 0.5rem;
+        min-width: 5.5rem; // big enough to fit "100%"
+        icon, label {
+          margin: 0 0.4rem;
         }
       }
 
       button {
         all: unset;
         @include utils.pill-button;
-        margin: 0 0.6rem 0 0;
-        padding: 0.6rem 0.4rem;
         font-size: 0.9rem;
-        border-radius: 500px;
         font-weight: 600;
+        border-radius: 500px;
 
         &.muted {
           background-color: $c-red;
         }
       }
 
-      scale {
-        @include utils.slider
+      .expander {
+        margin-left: 0.6rem;
+        -gtk-icon-style: symbolic;
+        color: $fg-color;
+        font-size: 1.5rem;
+        min-width: 32px;
+        min-height: 32px;
       }
     }
   }

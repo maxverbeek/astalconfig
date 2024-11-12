@@ -19,9 +19,9 @@ export default function AudioBluetooth() {
     <button
       onClick={(_self, click) => {
         if (click.button === Astal.MouseButton.PRIMARY) {
-          speaker.set_mute(!speaker.get_mute())
-        } else if (click.button === Astal.MouseButton.SECONDARY) {
           App.toggle_window('bluetooth')
+        } else if (click.button === Astal.MouseButton.SECONDARY) {
+          speaker.set_mute(!speaker.get_mute())
         }
       }}
 
