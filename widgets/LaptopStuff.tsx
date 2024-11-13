@@ -109,7 +109,7 @@ export default function LaptopStuff() {
 
         return <icon icon="unavailable" />
       })}
-      <BatteryIcon reveal={hoverReveal()} />
+      <BatterySection reveal={hoverReveal()} />
       {BrightnessSection(brightness, hoverReveal)}
     </box>
   </eventbox>
