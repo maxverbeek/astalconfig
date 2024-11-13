@@ -1,6 +1,6 @@
 import AstalNetwork from "gi://AstalNetwork?version=0.1"
 import AstalBattery from "gi://AstalBattery?version=0.1"
-import { bind, Variable } from "astal"
+import { bind, Binding, Variable } from "astal"
 import { cn, percentage } from "../utils"
 
 // copied this from the docs example
@@ -21,11 +21,17 @@ function WifiIcon(wifi: AstalNetwork.Wifi) {
   />
 }
 
-function WifiSection(wifi: AstalNetwork.Wifi, hovered: Variable<boolean>) {
+function WiredIcon() {
+  return <icon icon={bind(network.wired, 'icon_name')} tooltip_text={bind(network.wired, 'speed').as(s => s.toString())} />
+}
+
+function WifiSection({ reveal }: { reveal: Binding<boolean> }) {
+  const wifi = network.wifi
+
   return <box>
     {WifiIcon(wifi)}
     <revealer
-      reveal_child={hovered()}
+      reveal_child={reveal}
       transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
       visible={bind(wifi, 'ssid').as(ssid => !!ssid)}
     >
@@ -42,11 +48,11 @@ function BatteryIcon() {
   />
 }
 
-function BatterySection(battery: AstalBattery.Device, hovered: Variable<boolean>) {
+function BatterySection({ reveal }: { reveal: Binding<boolean> }) {
   return <box>
     <BatteryIcon />
     <revealer
-      reveal_child={hovered()}
+      reveal_child={reveal}
       transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
     >
       {bind(battery, 'percentage').as(percentage)}
@@ -92,8 +98,18 @@ export default function LaptopStuff() {
     onHover={() => hoverReveal.set(true)}
     onHoverLost={() => hoverReveal.set(false)}>
     <box className={batteryClass(cls => `LaptopStuff ${cls}`)}>
-      {bind(network, 'wifi').as(wifi => wifi ? WifiSection(wifi, hoverReveal) : null)}
-      {BatterySection(battery, hoverReveal)}
+      {bind(network, 'primary').as(primary => {
+        if (primary === AstalNetwork.Primary.WIFI) {
+          return <WifiSection reveal={hoverReveal()} />
+        }
+
+        if (primary === AstalNetwork.Primary.WIRED) {
+          return <WiredIcon />
+        }
+
+        return <icon icon="unavailable" />
+      })}
+      <BatteryIcon reveal={hoverReveal()} />
       {BrightnessSection(brightness, hoverReveal)}
     </box>
   </eventbox>

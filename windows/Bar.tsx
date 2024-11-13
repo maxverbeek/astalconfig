@@ -6,6 +6,9 @@ import Media from "../widgets/Media"
 import AudioBluetooth from "../widgets/AudioBluetooth"
 import LaptopStuff from "../widgets/LaptopStuff"
 import CurrentCluster from "../widgets/CurrentCluster"
+import AstalBattery from "gi://AstalBattery?version=0.1"
+
+const battery = AstalBattery.get_default()
 
 export default function Bar(monitor: Gdk.Monitor) {
   return <window
@@ -26,7 +29,7 @@ export default function Bar(monitor: Gdk.Monitor) {
       </box>
       <box className="right" hexpand halign={Gtk.Align.END}>
         <CurrentCluster />
-        <LaptopStuff />
+        {battery.isPresent && <LaptopStuff />}
         <AudioBluetooth />
         <Tray />
         <DateTime />
