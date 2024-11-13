@@ -3,6 +3,7 @@ import { App, Astal, ConstructProps, Gdk, Gtk, Widget, astalify } from "astal/gt
 import { Binding, Variable, bind } from "astal"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
 import AstalWp from "gi://AstalWp?version=0.1"
+import AstalBattery from "gi://AstalBattery?version=0.1"
 
 import { cn, percentage } from "../utils"
 
@@ -35,17 +36,36 @@ class Spinner extends astalify(Gtk.Spinner) {
 
 function BtStatus() {
   const bt = AstalBluetooth.get_default()
+  const upower = new AstalBattery.UPower()
+  const batteries = bind(upower, 'devices')
+
+  const btinfo = Variable.derive([bind(bt, 'devices'), batteries], (devices, batteries) => {
+    return devices.map(device => {
+      return {
+        device,
+        battery: batteries.find(b => b.serial === device.address)
+      }
+    })
+  })
 
   return <box vertical>
-    {bind(bt, "devices").as(devices => devices.map(device => <Device device={device} />))}
+    {bind(btinfo).as(devices => devices.map(device => <Device btinfo={device} />))}
   </box>
 }
 
-type DeviceProps = {
+type BtInfo = {
   device: AstalBluetooth.Device
+  battery?: AstalBattery.Device
 }
 
-function Device({ device }: DeviceProps) {
+type DeviceProps = {
+  btinfo: BtInfo
+}
+
+function Device({ btinfo: { device, battery } }: DeviceProps) {
+  const title = battery
+    ? Variable.derive([bind(device, 'alias'), bind(battery, 'percentage')], (d, p) => `${d} [${Math.floor(p * 100)}%]`)
+    : Variable.derive([bind(device, 'alias')], (a) => a)
   return <box className="btdevice">
     <button
       className={cn('connect', { 'connected': bind(device, 'connected') })()}
@@ -55,7 +75,7 @@ function Device({ device }: DeviceProps) {
     >
       <box hexpand>
         <icon icon={device.icon}></icon>
-        {bind(device, "alias").as(alias => <label hexpand xalign={0} label={alias}></label>)}
+        <label hexpand xalign={0} label={title()}></label>
         <Spinner
           visible={bind(device, "connecting")}
           setup={(self) => {

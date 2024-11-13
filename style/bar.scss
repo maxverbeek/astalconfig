@@ -26,6 +26,10 @@ window#bar {
       &.wifi-danger {
         color: $c-yellow; // anti iso violation
       }
+
+      &.battery {
+        -gtk-icon-style: symbolic;
+      }
     }
 
     &.battery-needs-juice .battery {

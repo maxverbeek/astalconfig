@@ -35,6 +35,8 @@
           packages = [
             ags.packages.${system}.agsFull
             ags.packages.${system}.io
+            ags.packages.${system}.battery
+            ags.packages.${system}.notifd
             pkgs.inotify-tools
             dev
           ];
