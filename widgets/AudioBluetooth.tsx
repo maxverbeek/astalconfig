@@ -1,7 +1,7 @@
 import Wireplumber from "gi://AstalWp"
 import { bind } from "astal"
 import { cn, percentage } from "../utils"
-import { App, Astal, ConstructProps, Gdk, Gtk, astalify } from "astal/gtk3"
+import { App, Astal } from "astal/gtk3"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
 
 export default function AudioBluetooth() {

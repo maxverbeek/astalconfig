@@ -76,3 +76,16 @@
     }
   }
 }
+
+@mixin fade-bg-between($name, $bgcolor) {
+  @keyframes #{$name} {
+    25% { 
+      background-color: $bgcolor;
+    }
+
+    // slows the animation by half, because it does nothing for the remainder of the duration.
+    50% {
+      background-color: inherit;
+    }
+  }
+}

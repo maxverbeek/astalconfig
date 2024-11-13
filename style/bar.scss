@@ -11,6 +11,42 @@ window#bar {
     }
   }
 
+  .LaptopStuff {
+    @include utils.reset-button;
+    @include utils.pill-button;
+
+    padding: 0;
+
+    icon {
+      margin: 0;
+      min-height: 32px;
+      min-width: 32px;
+      border-radius: 999px;
+
+      &.wifi-danger {
+        color: $c-yellow; // anti iso violation
+      }
+    }
+
+    &.battery-needs-juice .battery {
+      color: $c-yellow;
+    }
+
+    &.battery-low .battery {
+      color: $c-red;
+    }
+
+    @include utils.fade-bg-between(notify-red, $c-red);
+
+    &.battery-critical {
+      animation: notify-red 4s ease infinite;
+
+      .battery {
+        color: $c-red;
+      }
+    }
+  }
+
   .AudioBluetooth button {
     @include utils.reset-button;
     @include utils.pill-button;
