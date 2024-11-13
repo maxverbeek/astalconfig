@@ -2,7 +2,7 @@ import { App, Gdk } from "astal/gtk3"
 import { Variable, bind } from "astal"
 import Niri, { OutputsWithWorkspacesWithWindows, Window, WorkspaceWithWindows } from "../service/niri"
 
-const niri = new Niri()
+const niri = Niri.get_default()
 
 // whenever we notice that monitors appear/disappear, make a query to niri to repopulate the monitor information. Niri
 // does not recieve this over its eventbus. Moreover, niri does not get manufacturer names over the event stream. This

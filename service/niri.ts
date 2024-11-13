@@ -54,6 +54,15 @@ type ResponseOutputs = {
 @register({ GTypeName: 'Niri' })
 export default class Niri extends GObject.Object {
 
+  static instance: Niri
+  static get_default() {
+    if (!this.instance) {
+      this.instance = new Niri()
+    }
+
+    return this.instance
+  }
+
   @property(Object)
   get outputs(): OutputsWithWorkspacesWithWindows {
     const wsmap: OutputsWithWorkspacesWithWindows = {}
