@@ -6,6 +6,7 @@ import AstalWp from "gi://AstalWp?version=0.1"
 import AstalBattery from "gi://AstalBattery?version=0.1"
 
 import { cn, percentage } from "../utils"
+import MediaPlayer from "../widgets/MediaPlayer"
 
 // this stuff is massively annoying to implement, so I'll just use buttons for each audio option
 class ComboBox extends astalify(Gtk.ComboBox) {
