@@ -5,6 +5,7 @@ import Tray from "../widgets/Tray"
 import Media from "../widgets/Media"
 import AudioBluetooth from "../widgets/AudioBluetooth"
 import LaptopStuff from "../widgets/LaptopStuff"
+import CurrentCluster from "../widgets/CurrentCluster"
 
 export default function Bar(monitor: Gdk.Monitor) {
   return <window
@@ -24,6 +25,7 @@ export default function Bar(monitor: Gdk.Monitor) {
         <Media />
       </box>
       <box className="right" hexpand halign={Gtk.Align.END}>
+        <CurrentCluster />
         <LaptopStuff />
         <AudioBluetooth />
         <Tray />
