@@ -4,7 +4,7 @@ import { Binding, Variable, bind } from "astal"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
 import AstalWp from "gi://AstalWp?version=0.1"
 
-import { cn } from "../utils/className"
+import { cn, percentage } from "../utils"
 
 // this stuff is massively annoying to implement, so I'll just use buttons for each audio option
 class ComboBox extends astalify(Gtk.ComboBox) {
@@ -128,7 +128,7 @@ function EndpointStatus({ default_endpoint, endpoints }: EndpointStatusProps) {
         >
           <box className="volume">
             <icon icon={bind(default_endpoint, 'volumeIcon')} />
-            <label label={bind(default_endpoint, 'volume').as(v => `${Math.floor(v * 100)}%`)} />
+            <label label={bind(default_endpoint, 'volume').as(percentage)} />
           </box>
         </button>
         <slider

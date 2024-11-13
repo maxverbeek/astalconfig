@@ -1,6 +1,6 @@
 import Wireplumber from "gi://AstalWp"
 import { bind } from "astal"
-import { cn } from "../utils/className"
+import { cn, percentage } from "../utils"
 import { App, Astal, ConstructProps, Gdk, Gtk, astalify } from "astal/gtk3"
 import AstalBluetooth from "gi://AstalBluetooth?version=0.1"
 
@@ -9,8 +9,8 @@ export default function AudioBluetooth() {
   const speaker = audio?.get_default_speaker()!
   const mic = audio?.get_default_microphone()!
 
-  const audioVolText = bind(speaker, "volume").as(vol => `Speaker volume ${Math.floor(vol * 100)}%`)
-  const micVolText = bind(mic, "volume").as(vol => `Mic volume ${Math.floor(vol * 100)}%`)
+  const audioVolText = bind(speaker, "volume").as(vol => `Speaker volume ${percentage(vol)}`)
+  const micVolText = bind(mic, "volume").as(vol => `Mic volume ${percentage(vol)}`)
 
   const bt = AstalBluetooth.get_default()
   const bluetoothIcon = bind(bt, "is_powered").as(c => c ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic")

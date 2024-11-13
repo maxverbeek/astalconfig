@@ -23,3 +23,7 @@ export function cn(...classOrBindings: StringOrBooleanBinding[]): Variable<strin
     return allClasses.join(' ')
   })
 }
+
+export function percentage(zeroToOne: number): string {
+  return `${Math.floor(zeroToOne * 100)}%`
+}

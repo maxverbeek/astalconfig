@@ -1,13 +1,13 @@
 import Wireplumber from "gi://AstalWp"
 import { bind } from "astal"
-import { cn } from "../utils/className"
+import { cn, percentage } from "../utils"
 
 export default function Audio() {
   const audio = Wireplumber.get_default()?.audio
 
   const speaker = audio?.get_default_speaker()!
 
-  const volumeText = bind(speaker, "volume").as(vol => `Volume ${Math.floor(vol * 100)}%`)
+  const volumeText = bind(speaker, "volume").as(vol => `Volume ${percentage(vol)}`)
   const volumeIcon = bind(speaker, "volume_icon").as(vol => {
     console.log(vol)
 
