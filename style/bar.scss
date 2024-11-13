@@ -11,6 +11,17 @@ window#bar {
     }
   }
 
+  .CurrentCluster {
+    @include utils.pill-button;
+
+    padding-right: 0.8rem;
+
+    icon {
+      min-width: 32px;
+      min-height: 32px;
+    }
+  }
+
   .LaptopStuff {
     @include utils.reset-button;
     @include utils.pill-button;
