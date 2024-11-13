@@ -11,20 +11,27 @@ const network = AstalNetwork.get_default()
 const battery = AstalBattery.get_default()
 const brightness = AstalBrightness.get_default()
 
-function WifiIcon() {
-  const wifi = network.get_wifi()
+function WifiIcon(wifi: AstalNetwork.Wifi) {
+  const notIsoProof = bind(wifi, 'ssid').as(ssid => ssid?.includes('BusinessCenter'))
 
-  if (wifi) {
-    const notIsoProof = bind(wifi, 'ssid').as(ssid => ssid.includes('BusinessCenter'))
+  return <icon
+    icon={bind(wifi, 'icon_name')}
+    tooltip_text={bind(wifi, 'ssid').as(ssid => ssid ?? 'Not connected')}
+    className={cn({ 'wifi-danger': notIsoProof })()}
+  />
+}
 
-    return <icon
-      icon={bind(wifi, 'icon_name')}
-      tooltip_text={bind(wifi, 'ssid')}
-      className={cn({ 'wifi-danger': notIsoProof })()}
-    />
-  }
-
-  return null
+function WifiSection(wifi: AstalNetwork.Wifi, hovered: Variable<boolean>) {
+  return <box>
+    {WifiIcon(wifi)}
+    <revealer
+      reveal_child={hovered()}
+      transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
+      visible={bind(wifi, 'ssid').as(ssid => !!ssid)}
+    >
+      {bind(wifi, 'ssid')}
+    </revealer>
+  </box>
 }
 
 function BatteryIcon() {
@@ -35,8 +42,32 @@ function BatteryIcon() {
   />
 }
 
+function BatterySection(battery: AstalBattery.Device, hovered: Variable<boolean>) {
+  return <box>
+    <BatteryIcon />
+    <revealer
+      reveal_child={hovered()}
+      transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
+    >
+      {bind(battery, 'percentage').as(percentage)}
+    </revealer>
+  </box>
+}
+
 function BrightnessIcon() {
   return <icon icon="display-brightness-symbolic" tooltip_text={bind(brightness, 'screen').as(percentage)} />
+}
+
+function BrightnessSection(brightness: AstalBrightness, hovered: Variable<boolean>) {
+  return <box>
+    <BrightnessIcon />
+    <revealer
+      reveal_child={hovered()}
+      transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
+    >
+      <label label={bind(brightness, 'screen').as(percentage)} css="margin-right: 0.8rem" />
+    </revealer>
+  </box>
 }
 
 const batteryLevels: [number, string][] = [
@@ -61,27 +92,9 @@ export default function LaptopStuff() {
     onHover={() => hoverReveal.set(true)}
     onHoverLost={() => hoverReveal.set(false)}>
     <box className={batteryClass(cls => `LaptopStuff ${cls}`)}>
-      <WifiIcon />
-      <revealer
-        reveal_child={hoverReveal()}
-        transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
-      >
-        {bind(network.wifi!, 'ssid')}
-      </revealer>
-      <BatteryIcon />
-      <revealer
-        reveal_child={hoverReveal()}
-        transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
-      >
-        {bind(battery, 'percentage').as(percentage)}
-      </revealer>
-      <BrightnessIcon />
-      <revealer
-        reveal_child={hoverReveal()}
-        transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}
-      >
-        <label label={bind(brightness, 'screen').as(percentage)} css="margin-right: 0.8rem" />
-      </revealer>
+      {bind(network, 'wifi').as(wifi => wifi ? WifiSection(wifi, hoverReveal) : null)}
+      {BatterySection(battery, hoverReveal)}
+      {BrightnessSection(brightness, hoverReveal)}
     </box>
   </eventbox>
 
