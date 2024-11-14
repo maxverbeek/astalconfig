@@ -6,7 +6,7 @@ const k8s = KubernetesCluster.get_default()
 export default function CurrentCluster() {
   return <box
     className="CurrentCluster"
-    visible={bind(k8s, 'isProduction')}
+  /* visible={bind(k8s, 'isProduction')} */
   >
     <icon icon="kubernetes" />
     <label label={bind(k8s, 'clusterName').as(cn => cn ?? 'Unknown')} />
