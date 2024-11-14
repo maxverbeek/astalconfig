@@ -11,6 +11,28 @@ window#bar {
     }
   }
 
+  .ResourceUsage {
+    @include utils.pill-button;
+
+    .memory label {
+      padding-right: 0.8rem;
+    }
+
+    .medium icon {
+      color: $c-yellow;
+    }
+
+    .high icon {
+      color: $c-red;
+    }
+
+    icon {
+      min-width: 32px;
+      min-height: 32px;
+      
+    }
+  }
+
   .CurrentCluster {
     @include utils.pill-button;
 

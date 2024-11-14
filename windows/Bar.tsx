@@ -7,6 +7,7 @@ import AudioBluetooth from "../widgets/AudioBluetooth"
 import LaptopStuff from "../widgets/LaptopStuff"
 import CurrentCluster from "../widgets/CurrentCluster"
 import AstalBattery from "gi://AstalBattery?version=0.1"
+import ResourceUsage from "../widgets/ResourceUsage"
 
 const battery = AstalBattery.get_default()
 
@@ -25,9 +26,9 @@ export default function Bar(monitor: Gdk.Monitor) {
         <Workspaces forMonitor={monitor} showInactiveIcons></Workspaces>
       </box>
       <box className="center" hexpand>
-        <Media />
       </box>
       <box className="right" hexpand halign={Gtk.Align.END}>
+        <ResourceUsage />
         <CurrentCluster />
         {battery.isPresent && <LaptopStuff />}
         <AudioBluetooth />
