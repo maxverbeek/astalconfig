@@ -177,13 +177,12 @@ export default class Niri extends GObject.Object {
 
     this.readLineSocket(inputstream, (stream, result) => {
       if (!stream) {
-        console.error('not stream')
+        console.error('[NIRI] not stream')
         return
       }
 
       const line = stream.read_line_finish(result)[0] ?? new Uint8Array([])
       const text = new TextDecoder().decode(line)
-      console.log(text)
 
       const message = JSON.parse(text)
 

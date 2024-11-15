@@ -17,7 +17,7 @@
   margin: .4rem;
 
   &:hover, &.active {
-    background-color: lighten($bg-color, 10%);
+    background-color: $bg-color-lighter;
   }
 }
 
@@ -28,10 +28,10 @@
   color: $fg-color;
   border-radius: 0.6rem;
 
-  background-color: lighten($bg-color, 10%);
+  background-color: $bg-color-lighter;
 
   &:hover {
-    background-color: lighten($bg-color, 20%);
+    background-color: $bg-color-lighter-lighter;
   }
 }
 
@@ -42,7 +42,7 @@
     contents > trough {
       all: unset;
       transition: all;
-      background-color: lighten($bg-color, 20%);
+      background-color: $bg-color-lighter-lighter;
 
       transition: min-height;
       min-height: 1rem;

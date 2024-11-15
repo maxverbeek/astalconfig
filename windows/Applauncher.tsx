@@ -66,7 +66,7 @@ export default function Applauncher() {
           <entry
             placeholderText="Search"
             onChanged={({ text }) => query.set(text)}
-            onActivate={() => openfirst()}
+            onActivate={() => { if (query.get() !== "") openfirst() }}
             text={query()}
           />
           <box spacing={6} vertical>

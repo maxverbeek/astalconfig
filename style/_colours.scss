@@ -1,8 +1,11 @@
 @use "sass:string";
+@use "sass:color";
 
 // some kanagawa colours
 $bg-color: #1F1F28;
 $bg-color-darker: #16161D;
+$bg-color-lighter: color.adjust($bg-color, $lightness: 10%);
+$bg-color-lighter-lighter: color.adjust($bg-color, $lightness: 20%);
 
 $fg-color: #DCD7BA;
 $fg-color-darker: #C8C093;

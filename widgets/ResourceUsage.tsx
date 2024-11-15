@@ -25,7 +25,7 @@ export default function ResourceUsage() {
             'high': cpu.as(c => c > 0.9)
           })()}
         >
-          <icon icon="processor" />
+          <icon icon="processor-symbolic" />
           <revealer reveal_child={reveal()} transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT}>
             <label label={cpu.as(percentage)} />
           </revealer>

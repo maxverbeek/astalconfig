@@ -74,7 +74,7 @@ export default class Usage extends GObject.Object {
     setInterval(() => {
       const usage = this.getMemoryUsage()
       this.#memory = usage
-      this.notify('memory-usage')
+      this.notify('memory')
     }, 20000) // 20 seconds
   }
 

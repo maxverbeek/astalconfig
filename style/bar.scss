@@ -117,7 +117,7 @@ window#bar {
       border-radius: 500px;
 
       &:hover {
-        background-color: lighten($bg-color, 10%);
+        background-color: $bg-color-lighter;
       }
     }
   }
@@ -125,7 +125,7 @@ window#bar {
   .DateTime {
     @include utils.pill-button;
     padding: 0 .4rem;
-    // background-color: lighten($bg-color, 10%);
+    // background-color: $bg-color-lighter;
     background-color: transparent;
 
     .time {
