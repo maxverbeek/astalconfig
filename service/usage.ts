@@ -1,5 +1,6 @@
 import GObject, { register, property } from "astal/gobject"
 import { readFile, readFileAsync } from "astal/file"
+import { interval } from "astal"
 import GLib from "gi://GLib"
 
 type MemoryUsage = { percentage: number, total: number, used: number, free: number, available: number }
@@ -58,7 +59,8 @@ export default class Usage extends GObject.Object {
 
   private watchCPU() {
     this.#cpuStats = this.getCPUUsage()
-    setInterval(() => {
+    // 5 seconds
+    interval(5000, () => {
       const usage = this.getCPUUsage()
       const dtotal = usage.total - this.#cpuStats.total
       const didle = usage.idle - this.#cpuStats.idle
@@ -67,15 +69,16 @@ export default class Usage extends GObject.Object {
       this.#cpuStats = usage
 
       this.notify('cpu-usage')
-    }, 5000) // 5 seconds
+    })
   }
 
   private watchMemory() {
-    setInterval(() => {
+    // 20 seconds
+    interval(20000, () => {
       const usage = this.getMemoryUsage()
       this.#memory = usage
       this.notify('memory')
-    }, 20000) // 20 seconds
+    })
   }
 
   private getCPUUsage(): CpuTime {
