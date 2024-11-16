@@ -35,7 +35,7 @@
   }
 }
 
-@mixin slider {
+@mixin slider($fg, $fg-vibrant, $height: 1rem, $finetune-height: 1.2rem) {
   &.horizontal {
     all: unset;
 
@@ -45,34 +45,34 @@
       background-color: $bg-color-lighter-lighter;
 
       transition: min-height;
-      min-height: 1rem;
+      min-height: $height;
       border-radius: 999px;
 
       slider, progress {
         all: unset;
         transition: all 0.2s ease-in-out;
-        min-height: 1rem;
-        min-width: 1rem;
+        min-height: $height;
+        min-width: $height;
         border-radius: 999px;
         margin-left: -1rem;
       }
 
       highlight {
         all: unset;
-        background-color: $c-green;
+        background-color: $fg;
         border-radius: 999px;
       }
     }
 
     &.dragging slider, &.dragging progress {
       box-shadow: 0 0 5px gtkalpha($bg-color-darker, .4);
-      background-color: $c-green-vibrant;
+      background-color: $fg-vibrant;
     }
 
     &.fine-tune.dragging slider, &.fine-tune.dragging progress {
-      min-width: 1.2rem;
-      min-height: 1.2rem;
-      margin-left: -1.2rem;
+      min-width: $finetune-height;
+      min-height: $finetune-height;
+      margin-left: -1.2rem; // FIXME: should be height / 2
     }
   }
 }

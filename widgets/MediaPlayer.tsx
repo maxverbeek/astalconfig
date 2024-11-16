@@ -9,7 +9,7 @@ function lengthStr(length: number) {
   return `${min}:${sec0}${sec}`
 }
 
-function MediaPlayer({ player }: { player: Mpris.Player }) {
+export default function MediaPlayer({ player }: { player: Mpris.Player }) {
   const { START, END } = Gtk.Align
 
   const title = bind(player, "title").as(t =>
@@ -34,13 +34,14 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
 
   return <box className="MediaPlayer">
     <box className="cover-art" css={coverArt} />
-    <box vertical>
-      <box className="title">
-        <label truncate hexpand halign={START} label={title} />
-        <icon name={playerIcon} />
+    <box className="playerinfo" vertical>
+      <box>
+        <label className="title" truncate hexpand halign={START} label={title} />
+        <icon className="playericon" name={playerIcon} />
       </box>
-      <label halign={START} valign={START} vexpand wrap label={artist} />
+      <label halign={START} valign={START} vexpand wrap className="artist" label={artist} />
       <slider
+        cursor="pointer"
         visible={bind(player, "length").as(l => l > 0)}
         onDragged={({ value }) => player.position = value * player.length}
         value={position}
@@ -53,18 +54,21 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
           visible={bind(player, "length").as(l => l > 0)}
           label={bind(player, "position").as(lengthStr)}
         />
-        <box>
+        <box className="controls">
           <button
+            cursor="pointer"
             onClicked={() => player.previous()}
             visible={bind(player, "canGoPrevious")}>
             <icon icon="media-skip-backward-symbolic" />
           </button>
           <button
+            cursor="pointer"
             onClicked={() => player.play_pause()}
             visible={bind(player, "canControl")}>
             <icon icon={playIcon} />
           </button>
           <button
+            cursor="pointer"
             onClicked={() => player.next()}
             visible={bind(player, "canGoNext")}>
             <icon icon="media-skip-forward-symbolic" />
@@ -79,14 +83,5 @@ function MediaPlayer({ player }: { player: Mpris.Player }) {
         />
       </centerbox>
     </box>
-  </box>
-}
-
-export default function MprisPlayers() {
-  const mpris = Mpris.get_default()
-  return <box vertical>
-    {bind(mpris, "players").as(arr => arr.map(player => (
-      <MediaPlayer player={player} />
-    )))}
   </box>
 }

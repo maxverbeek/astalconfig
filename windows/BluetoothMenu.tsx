@@ -7,6 +7,7 @@ import AstalBattery from "gi://AstalBattery?version=0.1"
 
 import { cn, percentage } from "../utils"
 import MediaPlayer from "../widgets/MediaPlayer"
+import AstalMpris from "gi://AstalMpris?version=0.1"
 
 // this stuff is massively annoying to implement, so I'll just use buttons for each audio option
 class ComboBox extends astalify(Gtk.ComboBox) {
@@ -154,6 +155,7 @@ function EndpointStatus({ default_endpoint, endpoints }: EndpointStatusProps) {
         </button>
         <slider
           hexpand
+          cursor="pointer"
           onDragged={({ value }) => default_endpoint.volume = value}
           value={bind(default_endpoint, "volume")}
         />
@@ -176,6 +178,9 @@ export default function BluetoothMenu() {
   const speakers = bind(audio, 'speakers')
   const microphones = bind(audio, 'microphones')
 
+
+  const player = bind(AstalMpris.get_default(), 'players').as(players => players.find(p => p.bus_name === 'org.mpris.MediaPlayer2.spotify'))
+
   return <window
     name="bluetooth"
     className="BluetoothMenu"
@@ -191,6 +196,10 @@ export default function BluetoothMenu() {
         <label label="Audio" xalign={0} />
         <EndpointStatus default_endpoint={audio.default_speaker} endpoints={speakers} />
         <EndpointStatus default_endpoint={audio.default_microphone} endpoints={microphones} />
+        <label label="Music" xalign={0} visible={player.as(Boolean)} />
+        <box visible={player.as(Boolean)}>
+          {player.as(p => p && <MediaPlayer player={p} />)}
+        </box>
       </box>
     </eventbox>
   </window>

@@ -3,6 +3,7 @@ import { App, Gdk, Gtk } from "astal/gtk3"
 import Bar from "./windows/Bar"
 import BluetoothMenu from "./windows/BluetoothMenu"
 import Applauncher from "./windows/Applauncher"
+import NotificationPopups from "./windows/Notifications"
 
 App.start({
   icons: `./icons`,
@@ -35,6 +36,8 @@ App.start({
       bars.get(gdkmonitor)?.destroy()
       bars.delete(gdkmonitor)
     })
+
+    App.get_monitors().map(NotificationPopups)
 
     const applauncher = Applauncher()
     const btmenu = BluetoothMenu()

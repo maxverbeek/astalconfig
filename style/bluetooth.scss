@@ -75,7 +75,7 @@ window#bluetooth {
       }
 
       scale {
-        @include utils.slider;
+        @include utils.slider($c-green, $c-green-vibrant);
       }
 
       .volume {
@@ -106,6 +106,60 @@ window#bluetooth {
         min-width: 32px;
         min-height: 32px;
       }
+    }
+  }
+
+  .MediaPlayer {
+      border-radius: 1rem;
+      background-color: $bg-color;
+
+      .cover-art {
+        border-radius: 1rem;
+        min-width: 8.4rem;
+        min-height: 7rem;
+        background-size: cover;
+      }
+
+      .playerinfo {
+        padding: 0.8rem;
+    }
+
+    .title {
+      color: $c-green;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .artist {
+      color: $fg-color;
+      font-size: 1rem;
+      margin-top: 0.2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    scale {
+      @include utils.slider($c-blue, $c-blue-vibrant, $height: 0.6rem, $finetune-height: 0.8rem);
+    }
+
+    .controls {
+      margin-top: 0.8rem;
+
+      button {
+        @include utils.reset-button;
+        
+        color: $fg-color;
+        background-color: $bg-color-darker;
+        border-radius: 0.5rem;
+        margin: .5rem;
+
+        &:hover {
+          background-color: $bg-color-lighter;
+        }
+      }
+    }
+
+    .position, .length {
+      color: $fg-color;
     }
   }
 }
