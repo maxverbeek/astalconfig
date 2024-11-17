@@ -1,23 +1,23 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "experimentalDecorators": true,
-    "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["ESNext"],
-    "moduleResolution": "Bundler",
-    // "checkJs": true,
-    // "allowJs": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "/nix/store/x9p0zmv4h5wi8ln6wwip7bbgb7mmdpbd-astal-gjs/share/astal/gjs/gtk3",
-    "paths": {
-      "astal": [
-        "/nix/store/x9p0zmv4h5wi8ln6wwip7bbgb7mmdpbd-astal-gjs/share/astal/gjs"
-      ],
-      "astal/*": [
-        "/nix/store/x9p0zmv4h5wi8ln6wwip7bbgb7mmdpbd-astal-gjs/share/astal/gjs/*"
-      ]
-    },
-  }
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "/nix/store/3a5cwkqgm8m823idfi6cln2mjd5fj6a0-astal-gjs/share/astal/gjs/gtk3",
+        "lib": [
+            "ESNext"
+        ],
+        "module": "ES2022",
+        "moduleResolution": "Bundler",
+        "paths": {
+            "astal": [
+                "/nix/store/3a5cwkqgm8m823idfi6cln2mjd5fj6a0-astal-gjs/share/astal/gjs"
+            ],
+            "astal/*": [
+                "/nix/store/3a5cwkqgm8m823idfi6cln2mjd5fj6a0-astal-gjs/share/astal/gjs/*"
+            ]
+        },
+        "strict": true,
+        "target": "ES2022"
+    }
 }

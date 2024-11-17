@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs";
     utils.url = "github:numtide/flake-utils";
-    ags.url = "github:Aylur/ags/v2";
+    ags.url = "github:Aylur/ags";
     ags.inputs.nixpkgs.follows = "nixpkgs";
   };
 
