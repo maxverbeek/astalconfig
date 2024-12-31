@@ -185,22 +185,20 @@ export default function BluetoothMenu() {
     name="bluetooth"
     className="BluetoothMenu"
     setup={(self) => App.add_window(self)}
+    keymode={Astal.Keymode.ON_DEMAND}
     visible={false}
-    anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT | Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT}>
-    {/* this eventbox supposedly covers the entire screen and makes it so this closes when you click next to the window. However it also
-    triggers when clicking inside of child elements that don't register click events (such as the box) */}
-    <eventbox onClick={() => App.toggle_window('bluetooth')}>
-      <box className="AudioBluetoothMenu" clickThrough={false} vertical valign={Gtk.Align.START} halign={Gtk.Align.END}>
-        <label label="Bluetooth" xalign={0} />
-        <BtStatus />
-        <label label="Audio" xalign={0} />
-        <EndpointStatus default_endpoint={audio.default_speaker} endpoints={speakers} />
-        <EndpointStatus default_endpoint={audio.default_microphone} endpoints={microphones} />
-        <label label="Music" xalign={0} visible={player.as(Boolean)} />
-        <box visible={player.as(Boolean)}>
-          {player.as(p => p && <MediaPlayer player={p} />)}
-        </box>
+    onFocusOutEvent={(self) => App.toggle_window(self.name)}
+    anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT}>
+    <box className="AudioBluetoothMenu" clickThrough={false} vertical valign={Gtk.Align.START} halign={Gtk.Align.END}>
+      <label label="Bluetooth" xalign={0} />
+      <BtStatus />
+      <label label="Audio" xalign={0} />
+      <EndpointStatus default_endpoint={audio.default_speaker} endpoints={speakers} />
+      <EndpointStatus default_endpoint={audio.default_microphone} endpoints={microphones} />
+      <label label="Music" xalign={0} visible={player.as(Boolean)} />
+      <box visible={player.as(Boolean)}>
+        {player.as(p => p && <MediaPlayer player={p} />)}
       </box>
-    </eventbox>
+    </box>
   </window>
 }

@@ -55,6 +55,7 @@ export default function Applauncher() {
     application={App}
     visible={false}
     onShow={() => query.set("")}
+    onFocusOutEvent={() => hide()}
     onKeyPressEvent={function(_self, event: Gdk.Event) {
       if (event.get_keyval()[1] === Gdk.KEY_Escape) {
         hide()
