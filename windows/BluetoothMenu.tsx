@@ -141,34 +141,39 @@ function EndpointStatus({ default_endpoint, endpoints }: EndpointStatusProps) {
   })
 
   return <box vertical className="audiostatus">
-    <box vertical>
-      <box className="adjuster">
-        <button
-          cursor="pointer"
-          className={cn('mute', { 'muted': bind(default_endpoint, 'mute') })()}
-          onClick={() => default_endpoint.mute = !default_endpoint.mute}
-        >
-          <box className="volume">
-            <icon icon={bind(default_endpoint, 'volumeIcon')} />
-            <label label={bind(default_endpoint, 'volume').as(percentage)} />
-          </box>
-        </button>
-        <slider
-          hexpand
-          cursor="pointer"
-          onDragged={({ value }) => default_endpoint.volume = value}
-          value={bind(default_endpoint, "volume")}
-        />
-        <button cursor="pointer" className="expander" onClick={() => show.set(!show.get())}>
-          <icon icon={show(s => s ? 'pan-down-symbolic' : 'pan-end-symbolic')}></icon>
-        </button>
-      </box>
-      <revealer reveal_child={show()} transition_type={Gtk.RevealerTransitionType.SLIDE_DOWN}>
-        <box vertical>
-          {endpoints.as(endpoints => endpoints.map(Endpoint))}
+    <eventbox
+      onScroll={(_self, scroll) => {
+        default_endpoint.volume = scroll.delta_y < 0 ? Math.min(1, default_endpoint.volume + 0.02) : Math.max(0, default_endpoint.volume - 0.02)
+      }}>
+      <box vertical>
+        <box className="adjuster">
+          <button
+            cursor="pointer"
+            className={cn('mute', { 'muted': bind(default_endpoint, 'mute') })()}
+            onClick={() => default_endpoint.mute = !default_endpoint.mute}
+          >
+            <box className="volume">
+              <icon icon={bind(default_endpoint, 'volumeIcon')} />
+              <label label={bind(default_endpoint, 'volume').as(percentage)} />
+            </box>
+          </button>
+          <slider
+            hexpand
+            cursor="pointer"
+            onDragged={({ value }) => default_endpoint.volume = value}
+            value={bind(default_endpoint, "volume")}
+          />
+          <button cursor="pointer" className="expander" onClick={() => show.set(!show.get())}>
+            <icon icon={show(s => s ? 'pan-down-symbolic' : 'pan-end-symbolic')}></icon>
+          </button>
         </box>
-      </revealer>
-    </box>
+        <revealer reveal_child={show()} transition_type={Gtk.RevealerTransitionType.SLIDE_DOWN}>
+          <box vertical>
+            {endpoints.as(endpoints => endpoints.map(Endpoint))}
+          </box>
+        </revealer>
+      </box>
+    </eventbox>
   </box>
 }
 
