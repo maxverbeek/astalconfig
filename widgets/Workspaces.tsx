@@ -1,4 +1,4 @@
-import { App, Gdk } from "astal/gtk3"
+import { App, Astal, Gdk } from "astal/gtk3"
 import { Variable, bind } from "astal"
 import Niri, { OutputsWithWorkspacesWithWindows, Window, WorkspaceWithWindows } from "../service/niri"
 
@@ -34,6 +34,14 @@ function guessAppIcon(window: Window) {
 
   if (window.app_id === 'Slack') {
     return 'slack'
+  }
+
+  if (!!Astal.Icon.lookup_icon(window.app_id)) {
+    return window.app_id
+  }
+
+  if (!!Astal.Icon.lookup_icon(window.app_id.toLowerCase())) {
+    return window.app_id.toLowerCase()
   }
 
   // default custom icon from lucide
