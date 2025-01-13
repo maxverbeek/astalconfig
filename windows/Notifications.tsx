@@ -53,7 +53,7 @@ class NotifiationMap implements Subscribable {
            * uncomment this if you want to "hide" the notifications
            * after TIMEOUT_DELAY
            */
-          // this.delete(id)
+          this.delete(id)
         })
       }))
     })

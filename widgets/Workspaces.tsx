@@ -74,10 +74,22 @@ export type WorkspacesProps = {
   showInactiveIcons?: boolean
 }
 
+function getMonitorName(gdkmonitor: Gdk.Monitor) {
+  const display = Gdk.Display.get_default()!;
+  const screen = display.get_default_screen();
+  for (let i = 0; i < display.get_n_monitors(); ++i) {
+    if (gdkmonitor === display.get_monitor(i))
+      return screen.get_monitor_plug_name(i);
+  }
+}
+
 export default function Workspaces({ forMonitor, showInactiveIcons = false }: WorkspacesProps) {
-  const filterWorkspacesForMonitor = (outputs: OutputsWithWorkspacesWithWindows, monitorMake: string) => {
+  // hacky way to get the connector name (e.g. DP-2)
+  const monitorName = getMonitorName(forMonitor)!
+
+  const filterWorkspacesForMonitor = (outputs: OutputsWithWorkspacesWithWindows, name: string) => {
     return Object.values(outputs)
-      .filter(o => o.monitor?.make === monitorMake)
+      .filter(o => o.monitor?.name === name)
       .flatMap(o => Object.values(o.workspaces))
       .sort((a, b) => a.idx - b.idx)
   }
@@ -87,11 +99,11 @@ export default function Workspaces({ forMonitor, showInactiveIcons = false }: Wo
   // happen. I've added a setTimeout workaround in app.ts. Because of this workaround I technically don't need the
   // bind(forMonitor, 'manufacturer') statement, but I left it in here to remind myself how this works xD
   const outputs = bind(niri, 'outputs')
-  const monitorMake = bind(forMonitor, 'manufacturer')
 
-  const workspacesForMe = Variable.derive([outputs, monitorMake], filterWorkspacesForMonitor)
+  const workspacesForMe = outputs.as(os => filterWorkspacesForMonitor(os, monitorName))
+  /* const workspacesForMe = Variable.derive([outputs, monitorMake], filterWorkspacesForMonitor) */
 
   return <box className="Workspaces">
-    {workspacesForMe(ws => ws.map(w => Workspace(w, showInactiveIcons)))}
+    {workspacesForMe.as(ws => ws.map(w => Workspace(w, showInactiveIcons)))}
   </box>
 }
