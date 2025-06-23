@@ -11,7 +11,7 @@ App.connect('monitor-added', () => niri.reloadMonitors())
 App.connect('monitor-removed', () => niri.reloadMonitors())
 
 function guessAppIcon(window: Window) {
-  if (window.title?.endsWith('NVIM')) {
+  if (window.title?.endsWith('Nvim')) {
     return 'neovim'
   }
 
