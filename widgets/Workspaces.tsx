@@ -24,6 +24,10 @@ function guessAppIcon(window: Window) {
     return 'spotify'
   }
 
+  if (window.app_id === 'zen-alpha') {
+    return 'zen-browser'
+  }
+
   if (window.app_id === 'chromium-browser') {
     return 'chromium'
   }
