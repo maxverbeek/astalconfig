@@ -32,57 +32,8 @@
         packages.ags-max =
           (import nixpkgs {
             inherit system;
-            overlays = [ self.overlays.${system}.default ];
+            overlays = [ self.overlays.default ];
           }).ags-max;
-
-        overlays.default = prev: final: {
-          ags-max = prev.stdenv.mkDerivation rec {
-            name = "ags-max";
-            src = ./.;
-
-            nativeBuildInputs = with prev; [
-              wrapGAppsHook
-              gobject-introspection
-              self.packages.${prev.system}.ags
-            ];
-
-            buildInputs =
-              let
-                agspkgs = ags.packages.${prev.system};
-              in
-              [
-                final.gjs
-                agspkgs.apps
-                agspkgs.astal3
-                agspkgs.battery
-                agspkgs.bluetooth
-                agspkgs.gjs
-                agspkgs.io
-                agspkgs.mpris
-                agspkgs.network
-                agspkgs.notifd
-                agspkgs.tray
-                agspkgs.wireplumber
-              ];
-
-            installPhase = ''
-              runHook preInstall
-
-              mkdir -p $out/bin
-
-              ags bundle app.ts $out/bin/${name} -d "APPNAME='${name}'"
-
-              chmod +x $out/bin/${name}
-
-              # if the first line is not a shebang, make it so
-              if ! head -n 1 "$out/bin/${name}" | grep -q "^#!"; then
-                sed -i '1i #!/${pkgs.gjs}/bin/gjs -m' "$out/bin/${name}"
-              fi
-
-              runHook postInstall
-            '';
-          };
-        };
 
         devShell = pkgs.mkShell {
           name = "devshell";
@@ -101,5 +52,55 @@
           # ];
         };
       }
-    );
+    )
+    // {
+      overlays.default = prev: final: {
+        ags-max = prev.stdenv.mkDerivation rec {
+          name = "ags-max";
+          src = ./.;
+
+          nativeBuildInputs = with prev; [
+            wrapGAppsHook
+            gobject-introspection
+            self.packages.${prev.system}.ags
+          ];
+
+          buildInputs =
+            let
+              agspkgs = ags.packages.${prev.system};
+            in
+            [
+              final.gjs
+              agspkgs.apps
+              agspkgs.astal3
+              agspkgs.battery
+              agspkgs.bluetooth
+              agspkgs.gjs
+              agspkgs.io
+              agspkgs.mpris
+              agspkgs.network
+              agspkgs.notifd
+              agspkgs.tray
+              agspkgs.wireplumber
+            ];
+
+          installPhase = ''
+            runHook preInstall
+
+            mkdir -p $out/bin
+
+            ags bundle app.ts $out/bin/${name} -d "APPNAME='${name}'"
+
+            chmod +x $out/bin/${name}
+
+            # if the first line is not a shebang, make it so
+            if ! head -n 1 "$out/bin/${name}" | grep -q "^#!"; then
+              sed -i '1i #!/${final.gjs}/bin/gjs -m' "$out/bin/${name}"
+            fi
+
+            runHook postInstall
+          '';
+        };
+      };
+    };
 }
