@@ -5,8 +5,12 @@ import BluetoothMenu from "./windows/BluetoothMenu"
 import Applauncher from "./windows/Applauncher"
 import NotificationPopups from "./windows/Notifications"
 
+// set via esbuild --define (ags bundle -d): see flake.nix
+declare const APPNAME: string;
+
 App.start({
   icons: `./icons`,
+  instanceName: APPNAME || 'astal-dev',
   css: style,
   main() {
     const bars = new Map<Gdk.Monitor, Gtk.Widget>()
