@@ -55,6 +55,9 @@
     )
     // {
       overlays.default = prev: final: {
+        # cli
+        ags = ags.packages.${prev.system}.ags;
+
         ags-max = prev.stdenv.mkDerivation rec {
           name = "ags-max";
           src = ./.;
@@ -88,15 +91,17 @@
             runHook preInstall
 
             mkdir -p $out/bin
+            mkdir -p $out/share/icons
 
-            ags bundle app.ts $out/bin/${name} -d "APPNAME='${name}'"
-
+            ags bundle app.ts $out/bin/${name} -d "APPNAME='${name}'" -d "ICONPATH='$out/share/icons'"
             chmod +x $out/bin/${name}
 
             # if the first line is not a shebang, make it so
             if ! head -n 1 "$out/bin/${name}" | grep -q "^#!"; then
               sed -i '1i #!/${final.gjs}/bin/gjs -m' "$out/bin/${name}"
             fi
+
+            cp $src/icons/* $out/share/icons
 
             runHook postInstall
           '';

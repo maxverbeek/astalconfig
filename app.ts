@@ -7,9 +7,10 @@ import NotificationPopups from "./windows/Notifications"
 
 // set via esbuild --define (ags bundle -d): see flake.nix
 declare const APPNAME: string;
+declare const ICONPATH: string;
 
 App.start({
-  icons: `./icons`,
+  icons: ICONPATH || `./icons`,
   instanceName: APPNAME || 'astal-dev',
   css: style,
   main() {
