@@ -60,6 +60,84 @@ It can then display that (if available) in the menu as well which is super usefu
 have to position it to the top-right of my screen, and can instead align it to the button widget that opens it. But alas, I tried to get popovers to work
 for 10 minutes and failed, so I will wait until someone else does this in gtk3 typescript.
 
+## NixOS
+
+This repo comes with a flake.nix which provides an overlay you can easily use in your NixOS configuration. To use it: apply the overlay to your nixpkgs in your flake.nix:
+
+
+```nix
+{
+  description = "your flake.nix";
+  inputs = {
+    nixpkgs.url = "nixpkgs";
+    ags.url = "github:maxverbeek/astalconfig";
+  };
+
+  outputs = { ... }:
+
+  # somewhere in your flake, where you create your nixpkgs:
+  let nixpkgs = import nixpkgs { inherit system; overlays = [ ags.overlays.default ]; } in {}
+}
+```
+
+I personally run this stuff through a systemd service using the following systemd module:
+
+```nix
+{ pkgs, ... }:
+{
+  systemd.user.services.ags = {
+    Unit = {
+      Description = "Astal (ags) bar";
+      Wants = [ "niri.service" ];
+      After = [ "niri.service" ];
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.ags-max}/bin/ags-max";
+      Restart = "always";
+      RestartSec = "5s";
+
+      # disable logging for this, because child apps (such as anything i launch
+      # with the launcher) will end up logging here, and chrome is super
+      # verbose + may log sensitive info
+      StandardOutput = "null";
+      StandardError = "null";
+
+      # Add environment variables for xwayland-satellite so that stuff started
+      # through here can use Xwayland through this.
+      # FIXME: the value for this is set in system configuration but i cannot
+      # access that from home configuration
+      Environment = [ "DISPLAY=:0" ];
+    };
+  };
+}
+```
+
+I also install the ags cli tool (re-exported from the same overlay) so that I can use it to make requests to my ags
+instance:
+
+```nix
+{
+  # home-manager example
+  home.packages = [ pkgs.ags ];
+
+  # or
+  environment.systemPackages = [ pkgs.ags ];
+}
+```
+
+> [!IMPORTANT]
+> I set the instance name of my Ags instance to something custom so that I can open another instance when developing.
+> This means that any commands made with the ags cli will not work unless you specify this instance name. By default
+> this is set to the package name, which is set to `ags-max` (you can override it from the overlay). If you want to open
+> the launcher you need to use the `-i` flag:
+>
+> ```sh
+> ags -i ags-max toggle launcher
+> ```
+
 ## Future module ideas
 
 - Google calendar thing (would have to write a google oauth client in Vala probably) to display upcoming meetings
