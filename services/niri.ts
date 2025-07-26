@@ -1,4 +1,4 @@
-import GObject, { property, register } from "astal/gobject";
+import GObject, { getter, register } from "ags/gobject";
 import GLib from "gi://GLib?version=2.0";
 import Gio from "gi://Gio?version=2.0";
 
@@ -63,8 +63,10 @@ export default class Niri extends GObject.Object {
     return this.instance
   }
 
-  @property(Object)
-  get outputs(): OutputsWithWorkspacesWithWindows {
+  // NOTE: I want to return an OutputsWithWorkspacesWithWindows but to do that I need to build a GObject class
+  // that matches that and I cannot be bothered to work out how to do that.
+  @getter(Object)
+  get outputs(): Object {
     const wsmap: OutputsWithWorkspacesWithWindows = {}
 
     for (const win of this.#state.windows.values()) {
@@ -322,4 +324,3 @@ export default class Niri extends GObject.Object {
     })
   }
 }
-

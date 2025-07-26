@@ -1,7 +1,6 @@
-import GObject, { register, property } from "astal/gobject"
-import { readFile, readFileAsync } from "astal/file"
-import { interval } from "astal"
-import GLib from "gi://GLib"
+import GObject, { register, getter } from "ags/gobject"
+import { readFile } from "ags/file"
+import { interval } from "ags/time"
 
 type MemoryUsage = { percentage: number, total: number, used: number, free: number, available: number }
 
@@ -24,11 +23,11 @@ export default class Usage extends GObject.Object {
   #cpuStats: CpuTime = { total: 1, idle: 0 }
   #memory: MemoryUsage
 
-  @property(Number)
+  @getter(Number)
   get cpuUsage() { return this.#cpuUsage }
 
-  @property(Object)
-  get memory() { return this.#memory }
+  @getter(Object)
+  get memory() { return this.#memory as Object }
 
   constructor() {
     super()

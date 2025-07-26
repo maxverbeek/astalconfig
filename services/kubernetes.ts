@@ -1,5 +1,5 @@
-import GObject, { register, property } from "astal/gobject"
-import { monitorFile, readFileAsync } from "astal/file"
+import GObject, { register, getter } from "ags/gobject"
+import { monitorFile, readFileAsync } from "ags/file"
 import GLib from "gi://GLib"
 
 const home = GLib.getenv('HOME')!
@@ -20,10 +20,10 @@ export default class KubernetesCluster extends GObject.Object {
   #clusterName: string | null = null
   #isProduction: boolean = false
 
-  @property(String)
-  get clusterName() { return this.#clusterName }
+  @getter(String)
+  get clusterName() { return this.#clusterName || "" }
 
-  @property(Boolean)
+  @getter(Boolean)
   get isProduction() { return this.#isProduction }
 
   constructor() {

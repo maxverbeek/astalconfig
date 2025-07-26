@@ -1,110 +1,79 @@
 {
+  description = "My Awesome Desktop Shell";
+
   inputs = {
-    nixpkgs.url = "nixpkgs";
-    utils.url = "github:numtide/flake-utils";
-    ags.url = "github:Aylur/ags/v2.3.0";
-    ags.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+
+    ags = {
+      url = "github:aylur/ags";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      utils,
       ags,
     }:
-    utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      pname = "my-shell";
+      entry = "app.ts";
 
-        dev = pkgs.writeScriptBin "dev" ''
-          #!/usr/bin/env zsh
+      astalPackages = with ags.packages.${system}; [
+        io
+        astal4 # or astal3 for gtk3
+        battery
+        bluetooth
+        io
+        mpris
+        network
+        notifd
+        tray
+        wireplumber
+      ];
 
-          while ${pkgs.inotify-tools}/bin/inotifywait -e CREATE -r .; do
-            ags quit
-            ags run &
-          done
-        '';
-      in
-      {
-        packages.ags = ags.packages.${system}.agsFull;
-        packages.ags-max =
-          (import nixpkgs {
-            inherit system;
-            overlays = [ self.overlays.default ];
-          }).ags-max;
-
-        devShell = pkgs.mkShell {
-          name = "devshell";
-          packages = [
-            ags.packages.${system}.agsFull
-            ags.packages.${system}.io
-            ags.packages.${system}.battery
-            ags.packages.${system}.notifd
-            pkgs.inotify-tools
-            dev
-          ];
-          #
-          # propagatedBuildInputs = [
-          #   ags.packages.${system}.ags
-          #   ags.packages.${system}.hyprland
-          # ];
-        };
-      }
-    )
-    // {
-      overlays.default = prev: final: {
-        # cli
-        ags = ags.packages.${prev.system}.ags;
-
-        ags-max = prev.stdenv.mkDerivation rec {
-          name = "ags-max";
+      extraPackages = astalPackages ++ [
+        pkgs.libadwaita
+        pkgs.libsoup_3
+      ];
+    in
+    {
+      packages.${system} = {
+        default = pkgs.stdenv.mkDerivation {
+          name = pname;
           src = ./.;
 
-          nativeBuildInputs = with prev; [
+          nativeBuildInputs = with pkgs; [
             wrapGAppsHook
             gobject-introspection
-            self.packages.${prev.system}.ags
+            ags.packages.${system}.default
           ];
 
-          buildInputs =
-            let
-              agspkgs = ags.packages.${prev.system};
-            in
-            [
-              final.gjs
-              agspkgs.apps
-              agspkgs.astal3
-              agspkgs.battery
-              agspkgs.bluetooth
-              agspkgs.gjs
-              agspkgs.io
-              agspkgs.mpris
-              agspkgs.network
-              agspkgs.notifd
-              agspkgs.tray
-              agspkgs.wireplumber
-            ];
+          buildInputs = extraPackages ++ [ pkgs.gjs ];
 
           installPhase = ''
             runHook preInstall
 
             mkdir -p $out/bin
-            mkdir -p $out/share/icons
-
-            ags bundle app.ts $out/bin/${name} -d "APPNAME='${name}'" -d "ICONPATH='$out/share/icons'"
-            chmod +x $out/bin/${name}
-
-            # if the first line is not a shebang, make it so
-            if ! head -n 1 "$out/bin/${name}" | grep -q "^#!"; then
-              sed -i '1i #!/${final.gjs}/bin/gjs -m' "$out/bin/${name}"
-            fi
-
-            cp $src/icons/* $out/share/icons
+            mkdir -p $out/share
+            cp -r * $out/share
+            ags bundle ${entry} $out/bin/${pname} -d "SRC='$out/share'"
 
             runHook postInstall
           '';
+        };
+      };
+
+      devShells.${system} = {
+        default = pkgs.mkShell {
+          buildInputs = [
+            (ags.packages.${system}.default.override {
+              inherit extraPackages;
+            })
+          ];
         };
       };
     };
