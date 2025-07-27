@@ -20,9 +20,10 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       pname = "my-shell";
-      entry = "app.ts";
+      entry = "app.tsx";
 
       astalPackages = with ags.packages.${system}; [
+        apps
         io
         astal4 # or astal3 for gtk3
         battery
@@ -31,6 +32,7 @@
         mpris
         network
         notifd
+        powerprofiles
         tray
         wireplumber
       ];
@@ -69,10 +71,20 @@
 
       devShells.${system} = {
         default = pkgs.mkShell {
+          # buildInputs = [
+          #   (ags.packages.${system}.default.override {
+          #     inherit extraPackages;
+          #   })
+          # ] ++ extraPackages;
           buildInputs = [
-            (ags.packages.${system}.default.override {
-              inherit extraPackages;
-            })
+            ags.packages.${system}.agsFull
+            ags.packages.${system}.astal4
+            ags.packages.${system}.bluetooth
+            ags.packages.${system}.wireplumber
+            ags.packages.${system}.notifd
+            pkgs.gjs
+            pkgs.libadwaita
+            pkgs.libsoup_3
           ];
         };
       };

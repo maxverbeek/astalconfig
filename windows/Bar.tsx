@@ -1,42 +1,40 @@
 import app from "ags/gtk4/app"
-import { Astal, Gtk, Gdk } from "ags/gtk4"
-import { execAsync } from "ags/process"
-import { createPoll } from "ags/time"
+import Astal from "gi://Astal?version=4.0"
+import Gdk from "gi://Gdk?version=4.0"
 
-type BarProps = {
-  gdkmonitor: Gdk.Monitor
-}
+import Clock from "../widgets/Clock"
+import Mpris from "../widgets/Mpris"
+import Tray from "../widgets/Tray"
+import Wireless from "../widgets/Wireless"
+import AudioOutput from "../widgets/AudioOutput"
+import Battery from "../widgets/Battery"
+import Niri from "../widgets/Niri"
 
-export default function Bar({ gdkmonitor }: BarProps) {
-  const time = createPoll("", 1000, "date")
+
+export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
 
   return (
     <window
       visible
       name="bar"
-      class="Bar"
       gdkmonitor={gdkmonitor}
       exclusivity={Astal.Exclusivity.EXCLUSIVE}
       anchor={TOP | LEFT | RIGHT}
       application={app}
     >
-      <centerbox cssName="centerbox">
-        <button
-          $type="start"
-          onClicked={() => execAsync("echo hello").then(console.log)}
-          hexpand
-          halign={Gtk.Align.CENTER}
-        >
-          <label label="Welcome to AGS!" />
-        </button>
-        <box $type="center" />
-        <menubutton $type="end" hexpand halign={Gtk.Align.CENTER}>
-          <label label={time} />
-          <popover>
-            <Gtk.Calendar showWeekNumbers />
-          </popover>
-        </menubutton>
+      <centerbox>
+        <box $type="start">
+          <Niri forMonitor={gdkmonitor} showInactiveIcons />
+          <Clock />
+          <Mpris />
+        </box>
+        <box $type="end">
+          <Tray />
+          <Wireless />
+          <AudioOutput />
+          <Battery />
+        </box>
       </centerbox>
     </window>
   )
