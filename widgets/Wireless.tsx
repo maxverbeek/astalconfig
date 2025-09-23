@@ -1,9 +1,9 @@
-import AstalNetwork from "gi://AstalNetwork?version=0.1"
+import AstalNetwork from "gi://AstalNetwork"
 import Gtk from "gi://Gtk?version=4.0"
-import { createBinding, For, With } from "ags"
+import { For, With, createBinding } from "ags"
 import { execAsync } from "ags/process"
 
-export default function Wireless() {
+function Wireless() {
   const network = AstalNetwork.get_default()
   const wifi = createBinding(network, "wifi")
 
@@ -58,3 +58,4 @@ export default function Wireless() {
   )
 }
 
+export default Wireless

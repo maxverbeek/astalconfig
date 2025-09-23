@@ -1,10 +1,9 @@
-import AstalBattery from "gi://AstalBattery?version=0.1"
-import AstalPowerProfiles from "gi://AstalPowerProfiles?version=0.1"
 import Gtk from "gi://Gtk?version=4.0"
-
+import AstalBattery from "gi://AstalBattery"
+import AstalPowerProfiles from "gi://AstalPowerProfiles"
 import { createBinding } from "ags"
 
-export default function Battery() {
+function Battery() {
   const battery = AstalBattery.get_default()
   const powerprofiles = AstalPowerProfiles.get_default()
 
@@ -35,3 +34,5 @@ export default function Battery() {
     </menubutton>
   )
 }
+
+export default Battery

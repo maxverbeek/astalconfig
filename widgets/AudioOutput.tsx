@@ -1,7 +1,7 @@
-import AstalWp from "gi://AstalWp?version=0.1"
+import AstalWp from "gi://AstalWp"
 import { createBinding } from "ags"
 
-export default function AudioOutput() {
+function AudioOutput() {
   const { defaultSpeaker: speaker } = AstalWp.get_default()!
 
   return (
@@ -20,3 +20,4 @@ export default function AudioOutput() {
   )
 }
 
+export default AudioOutput

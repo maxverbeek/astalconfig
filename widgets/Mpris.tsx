@@ -1,9 +1,9 @@
-import AstalApps from "gi://AstalApps?version=0.1"
-import AstalMpris from "gi://AstalMpris?version=0.1"
+import AstalMpris from "gi://AstalMpris"
+import AstalApps from "gi://AstalApps"
 import Gtk from "gi://Gtk?version=4.0"
-import { createBinding, For } from "ags"
+import { For, createBinding } from "ags"
 
-export default function Mpris() {
+function Mpris() {
   const mpris = AstalMpris.get_default()
   const apps = new AstalApps.Apps()
   const players = createBinding(mpris, "players")
@@ -33,8 +33,8 @@ export default function Mpris() {
                   valign={Gtk.Align.CENTER}
                   orientation={Gtk.Orientation.VERTICAL}
                 >
-                  <label xalign={0} label={createBinding(player, "title").as(t => t || '')} />
-                  <label xalign={0} label={createBinding(player, "artist").as(a => a || '')} />
+                  <label xalign={0} label={createBinding(player, "title")} />
+                  <label xalign={0} label={createBinding(player, "artist")} />
                 </box>
                 <box hexpand halign={Gtk.Align.END}>
                   <button
@@ -79,3 +79,5 @@ export default function Mpris() {
     </menubutton>
   )
 }
+
+export default Mpris
