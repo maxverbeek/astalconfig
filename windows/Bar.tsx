@@ -7,6 +7,7 @@ import AudioOutput from "../widgets/AudioOutput"
 import Battery from "../widgets/Battery"
 import Tray from "../widgets/Tray"
 import Clock from "../widgets/Clock"
+import NiriWorkspaces from "../widgets/NiriWorkspaces"
 
 export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   let win: Astal.Window
@@ -32,7 +33,7 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
     >
       <centerbox>
         <box $type="start">
-          <NiriWorkspaces />
+          <NiriWorkspaces forMonitor={gdkmonitor} />
         </box>
         <box $type="end">
           <Wireless />

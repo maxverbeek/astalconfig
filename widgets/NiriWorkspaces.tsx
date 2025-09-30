@@ -1,7 +1,8 @@
 import Gdk from "gi://Gdk?version=4.0"
-import Astal from "gi://Astal?version=4.0"
 import Niri, { OutputsWithWorkspacesWithWindows, Window, WorkspaceWithWindows } from "../services/niri"
 import app from "ags/gtk4/app"
+import Gtk from "gi://Gtk?version=4.0"
+import { createBinding } from "ags"
 
 const niri = Niri.get_default()
 
@@ -11,7 +12,7 @@ const niri = Niri.get_default()
 app.connect('monitor-added', () => niri.reloadMonitors())
 app.connect('monitor-removed', () => niri.reloadMonitors())
 
-function guessAppIcon(window: Window) {
+function guessAppIcon(window: Window, display: Gdk.Display) {
   if (window.title?.endsWith('Nvim')) {
     return 'neovim'
   }
@@ -41,11 +42,11 @@ function guessAppIcon(window: Window) {
     return 'slack'
   }
 
-  if (!!Astal.Icon.lookup_icon(window.app_id)) {
+  if (Gtk.IconTheme.get_for_display(display).has_icon(window.app_id)) {
     return window.app_id
   }
 
-  if (!!Astal.Icon.lookup_icon(window.app_id.toLowerCase())) {
+  if (Gtk.IconTheme.get_for_display(display).has_icon(window.app_id.toLowerCase())) {
     return window.app_id.toLowerCase()
   }
 
@@ -53,7 +54,7 @@ function guessAppIcon(window: Window) {
   return 'circle-dashed'
 }
 
-function Workspace(workspace: WorkspaceWithWindows, showInactiveIcons: boolean) {
+function Workspace(workspace: WorkspaceWithWindows, showInactiveIcons: boolean, monitor: Gdk.Monitor) {
   const traits = ['workspace']
   if (workspace.is_active) {
     traits.push('active')
@@ -66,10 +67,10 @@ function Workspace(workspace: WorkspaceWithWindows, showInactiveIcons: boolean) 
   const className = traits.join(' ')
   const showIcons = (workspace.is_active || showInactiveIcons) && workspace.windows.length > 0
 
-  return <button onClick={() => niri.focusWorkspaceId(workspace.id)} className={className}>
+  return <button onClicked={() => niri.focusWorkspaceId(workspace.id)} class={className}>
     <box spacing={showIcons ? 5 : 0}>
-      <label className="ws-idx" label={workspace.idx.toString()} />
-      {showIcons && workspace.windows.map(win => <icon icon={guessAppIcon(win)} />)}
+      <label class="ws-idx" label={workspace.idx.toString()} />
+      {showIcons && workspace.windows.map(win => <image iconName={guessAppIcon(win, monitor.display)} />)}
     </box>
   </button>
 }
@@ -103,12 +104,12 @@ export default function Workspaces({ forMonitor, showInactiveIcons = false }: Wo
   // field was not set. I thought this would emit a signal when it is set afterwards (hence the binds) but that doesn't
   // happen. I've added a setTimeout workaround in app.ts. Because of this workaround I technically don't need the
   // bind(forMonitor, 'manufacturer') statement, but I left it in here to remind myself how this works xD
-  const outputs = bind(niri, 'outputs')
+  const outputs = createBinding(niri, 'outputs')
 
   const workspacesForMe = outputs.as(os => filterWorkspacesForMonitor(os, monitorName))
   /* const workspacesForMe = Variable.derive([outputs, monitorMake], filterWorkspacesForMonitor) */
 
-  return <box className="Workspaces">
-    {workspacesForMe.as(ws => ws.map(w => Workspace(w, showInactiveIcons)))}
+  return <box class="Workspaces">
+    {workspacesForMe.as(ws => ws.map(w => Workspace(w, showInactiveIcons, forMonitor)))}
   </box>
 }

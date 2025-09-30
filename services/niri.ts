@@ -65,6 +65,7 @@ export default class Niri extends GObject.Object {
 
   // NOTE: I want to return an OutputsWithWorkspacesWithWindows but to do that I need to build a GObject class
   // that matches that and I cannot be bothered to work out how to do that.
+  // FIXME: use https://aylur.github.io/gnim/gobject
   @getter(Object)
   get outputs(): Object {
     const wsmap: OutputsWithWorkspacesWithWindows = {}
