@@ -1,16 +1,9 @@
 import Gdk from "gi://Gdk?version=4.0"
 import Niri, { OutputsWithWorkspacesWithWindows, Window, WorkspaceWithWindows } from "../services/niri"
-import app from "ags/gtk4/app"
 import Gtk from "gi://Gtk?version=4.0"
-import { createBinding } from "ags"
+import { Accessor, createBinding, createComputed, For } from "ags"
 
 const niri = Niri.get_default()
-
-// whenever we notice that monitors appear/disappear, make a query to niri to repopulate the monitor information. Niri
-// does not recieve this over its eventbus. Moreover, niri does not get manufacturer names over the event stream. This
-// only happens when you query for outputs explicitly which is what is triggered here.
-app.connect('monitor-added', () => niri.reloadMonitors())
-app.connect('monitor-removed', () => niri.reloadMonitors())
 
 function guessAppIcon(window: Window, display: Gdk.Display) {
   if (window.title?.endsWith('Nvim')) {
@@ -81,12 +74,13 @@ export type WorkspacesProps = {
 }
 
 function getMonitorName(gdkmonitor: Gdk.Monitor) {
-  const display = Gdk.Display.get_default()!;
-  const screen = display.get_default_screen();
-  for (let i = 0; i < display.get_n_monitors(); ++i) {
-    if (gdkmonitor === display.get_monitor(i))
-      return screen.get_monitor_plug_name(i);
-  }
+  return gdkmonitor.connector
+  // const display = Gdk.Display.get_default()!;
+  // const screen = display.get_default_screen();
+  // for (let i = 0; i < display.get_n_monitors(); ++i) {
+  //   if (gdkmonitor === display.get_monitor(i))
+  //     return screen.get_monitor_plug_name(i);
+  // }
 }
 
 export default function Workspaces({ forMonitor, showInactiveIcons = false }: WorkspacesProps) {
@@ -104,12 +98,14 @@ export default function Workspaces({ forMonitor, showInactiveIcons = false }: Wo
   // field was not set. I thought this would emit a signal when it is set afterwards (hence the binds) but that doesn't
   // happen. I've added a setTimeout workaround in app.ts. Because of this workaround I technically don't need the
   // bind(forMonitor, 'manufacturer') statement, but I left it in here to remind myself how this works xD
-  const outputs = createBinding(niri, 'outputs')
+  const outputs = createBinding(niri, 'outputs') as Accessor<OutputsWithWorkspacesWithWindows>
 
-  const workspacesForMe = outputs.as(os => filterWorkspacesForMonitor(os, monitorName))
+  const workspacesForMe = createComputed((get) => filterWorkspacesForMonitor(get(outputs), monitorName))
   /* const workspacesForMe = Variable.derive([outputs, monitorMake], filterWorkspacesForMonitor) */
 
   return <box class="Workspaces">
-    {workspacesForMe.as(ws => ws.map(w => Workspace(w, showInactiveIcons, forMonitor)))}
+    <For each={workspacesForMe}>
+      {w => Workspace(w, showInactiveIcons, forMonitor)}
+    </For>
   </box>
 }

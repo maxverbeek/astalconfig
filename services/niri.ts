@@ -1,6 +1,6 @@
-import GObject, { getter, register } from "ags/gobject";
-import GLib from "gi://GLib?version=2.0";
 import Gio from "gi://Gio?version=2.0";
+import GLib from "gi://GLib?version=2.0";
+import GObject, { getter, register } from "gnim/gobject";
 
 export type Workspace = {
   id: number,
