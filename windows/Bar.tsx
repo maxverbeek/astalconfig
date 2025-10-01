@@ -33,7 +33,7 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
     >
       <centerbox>
         <box $type="start">
-          <NiriWorkspaces forMonitor={gdkmonitor} />
+          <NiriWorkspaces showInactiveIcons forMonitor={gdkmonitor} />
         </box>
         <box $type="end">
           <Wireless />
