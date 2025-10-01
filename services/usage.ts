@@ -2,7 +2,7 @@ import GObject, { register, getter } from "ags/gobject"
 import { readFile } from "ags/file"
 import { interval } from "ags/time"
 
-type MemoryUsage = { percentage: number, total: number, used: number, free: number, available: number }
+export type MemoryUsage = { percentage: number, total: number, used: number, free: number, available: number }
 
 type CpuTime = { total: number, idle: number }
 

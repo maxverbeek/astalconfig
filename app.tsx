@@ -7,6 +7,7 @@ import Niri from "./services/niri"
 const niri = Niri.get_default()
 
 app.start({
+  icons: './icons',
   css: style,
   // It's usually best to go with the default Adwaita theme
   // and built off of it, instead of allowing the system theme
