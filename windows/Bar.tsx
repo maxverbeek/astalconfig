@@ -9,6 +9,8 @@ import Tray from "../widgets/Tray"
 import Clock from "../widgets/Clock"
 import NiriWorkspaces from "../widgets/NiriWorkspaces"
 import Usage from "../widgets/Usage"
+import KubeContext from "../widgets/KubeContext"
+import LaptopThings from "../widgets/LaptopThings"
 
 export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   let win: Astal.Window
@@ -38,9 +40,11 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
         </box>
         <box $type="end">
           <Usage />
+          <KubeContext />
+          <LaptopThings />
           <Wireless />
-          <AudioOutput />
           <Battery />
+          <AudioOutput />
           <Tray />
           <Clock />
         </box>
