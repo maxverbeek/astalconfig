@@ -11,6 +11,7 @@ import NiriWorkspaces from "../widgets/NiriWorkspaces"
 import Usage from "../widgets/Usage"
 import KubeContext from "../widgets/KubeContext"
 import LaptopThings from "../widgets/LaptopThings"
+import BluetoothAudioMenu from "../widgets/BluetoothAudioMenu"
 
 export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
   let win: Astal.Window
@@ -42,9 +43,7 @@ export default function Bar({ gdkmonitor }: { gdkmonitor: Gdk.Monitor }) {
           <Usage />
           <KubeContext />
           <LaptopThings />
-          <Wireless />
-          <Battery />
-          <AudioOutput />
+          <BluetoothAudioMenu />
           <Tray />
           <Clock />
         </box>
