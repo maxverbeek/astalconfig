@@ -1,5 +1,5 @@
 import GObject, { register, getter } from "ags/gobject"
-import { monitorFile, readFileAsync } from "ags/file"
+import { monitorFile, readFile, readFileAsync } from "ags/file"
 import { exec, execAsync } from "ags/process"
 
 const get = (args: string) => Number(exec(`brightnessctl ${args}`))
@@ -18,8 +18,10 @@ export default class Brightness extends GObject.Object {
 
   #kbdMax = get(`--device ${kbd} max`)
   #kbd = get(`--device ${kbd} get`)
+  #hasKbd = false
   #screenMax = get("max")
   #screen = get("get") / (get("max") || 1)
+  #hasScreen = false
 
   @getter(Number)
   get kbd() { return this.#kbd }
@@ -33,6 +35,9 @@ export default class Brightness extends GObject.Object {
       this.notify("kbd")
     })
   }
+
+  @getter(Boolean)
+  get hasKbd() { return this.#hasKbd }
 
   @getter(Number)
   get screen() { return this.#screen }
@@ -50,11 +55,20 @@ export default class Brightness extends GObject.Object {
     })
   }
 
+  @getter(Boolean)
+  get hasScreen() { return this.#hasScreen }
+
   constructor() {
     super()
 
     const screenPath = `/sys/class/backlight/${screen}/brightness`
     const kbdPath = `/sys/class/leds/${kbd}/brightness`
+
+    this.#hasScreen = !!readFile(screenPath)
+    this.#hasKbd = !!readFile(kbdPath)
+
+    this.notify("has-screen")
+    this.notify("has-kbd")
 
     monitorFile(screenPath, async f => {
       const v = await readFileAsync(f)
