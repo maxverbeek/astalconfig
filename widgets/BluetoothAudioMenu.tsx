@@ -1,7 +1,7 @@
 import AstalBluetooth from 'gi://AstalBluetooth?version=0.1'
 import Wireplumber from 'gi://AstalWp'
 import Gtk from 'gi://Gtk?version=4.0'
-import { createBinding, For } from 'gnim'
+import { Accessor, createBinding, createComputed, createState, For, With } from 'gnim'
 
 const { HORIZONTAL, VERTICAL } = Gtk.Orientation
 
@@ -11,9 +11,10 @@ function percentage(perc: number): string {
 
 type AudioSliderProps = {
   endpoint: Wireplumber.Endpoint
+  onOpen(): any
 }
 
-function AudioSlider({ endpoint }: AudioSliderProps) {
+function AudioSlider({ endpoint, onOpen }: AudioSliderProps) {
   const vol = createBinding(endpoint, "volume")
   const volpct = vol(percentage)
   return <box>
@@ -28,6 +29,9 @@ function AudioSlider({ endpoint }: AudioSliderProps) {
       onChangeValue={({ value }) => endpoint.set_volume(value)}
       value={createBinding(endpoint, "volume")}
     />
+    <button onClicked={() => onOpen()}>
+      <image icon_name="" />
+    </button>
   </box>
 }
 
@@ -63,8 +67,9 @@ function BluetoothDevices() {
 function BluetoothAudioMenu() {
 
   const bt = AstalBluetooth.get_default()
-  const { defaultSpeaker, defaultMicrophone } = Wireplumber.get_default()
+  const { defaultSpeaker, defaultMicrophone, audio } = Wireplumber.get_default()
 
+  // menu
   const speakerVolume = createBinding(defaultSpeaker, 'volume')(percentage)
   const speakerIcon = createBinding(defaultSpeaker, 'volume_icon')
 
@@ -73,18 +78,47 @@ function BluetoothAudioMenu() {
 
   const bluetoothIcon = createBinding(bt, "is_powered")(c => c ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic")
 
+  // device choice
+  const speakers = createBinding(audio, 'speakers')
+  const microphones = createBinding(audio, 'microphones')
+  const [menuSelectedFor, setMenuSelectedFor] = createState<null | 'speakers' | 'microphones'>(null)
+  const visibleMenu = menuSelectedFor(m => m === null ? 'menu' : 'device_choice')
+
+  const selectedEndpoints = createComputed(get => {
+    if (get(menuSelectedFor) === 'speakers') {
+      return get(speakers)
+    }
+
+    if (get(menuSelectedFor) === 'microphones') {
+      return get(microphones)
+    }
+
+    return []
+  })
+
   return <menubutton>
     <box>
       <image icon_name={bluetoothIcon} />
       <image tooltip_text={speakerVolume} icon_name={speakerIcon} />
       <image tooltip_text={microphoneVolume} icon_name={microphoneIcon} />
     </box>
-    <popover>
-      <box orientation={VERTICAL}>
-        <AudioSlider endpoint={defaultSpeaker} />
-        <AudioSlider endpoint={defaultMicrophone} />
-        <BluetoothDevices />
-      </box>
+    <popover onClosed={() => setMenuSelectedFor(null)}>
+      <stack visible_child_name={visibleMenu} transition_type={Gtk.StackTransitionType.SLIDE_LEFT_RIGHT}>
+        <box $type="named" name="menu" orientation={VERTICAL}>
+          <AudioSlider endpoint={defaultSpeaker} onOpen={() => { setMenuSelectedFor('speakers') }} />
+          <AudioSlider endpoint={defaultMicrophone} onOpen={() => { setMenuSelectedFor('microphones') }} />
+          <BluetoothDevices />
+        </box>
+        <box $type="named" name="device_choice" orientation={VERTICAL}>
+          <button onClicked={() => setMenuSelectedFor(null)}>
+            <label label="back" />
+          </button>
+          <label label="test" />
+          <For each={selectedEndpoints}>
+            {endpoint => <label label={endpoint.name} />}
+          </For>
+        </box>
+      </stack>
     </popover>
   </menubutton>
 }
