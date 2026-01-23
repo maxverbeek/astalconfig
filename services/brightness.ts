@@ -1,0 +1,98 @@
+import GObject, { register, getter } from "ags/gobject"
+import { monitorFile, readFile, readFileAsync } from "ags/file"
+import { exec, execAsync } from "ags/process"
+
+const get = (args: string) => Number(exec(`brightnessctl ${args}`))
+const screen = exec(`bash -c "ls -w1 /sys/class/backlight | head -1"`)
+const kbd = exec(`bash -c "ls -w1 /sys/class/leds | head -1"`)
+
+@register({ GTypeName: "Brightness" })
+export default class Brightness extends GObject.Object {
+  static instance: Brightness
+  static get_default() {
+    if (!this.instance)
+      this.instance = new Brightness()
+
+    return this.instance
+  }
+
+  #kbdMax = get(`--device ${kbd} max`)
+  #kbd = get(`--device ${kbd} get`)
+  #hasKbd = false
+  #screenMax = get("max")
+
+  #screen = get("get") / (get("max") || 1)
+  #locked = false
+
+  #hasScreen = false
+
+  @getter(Number)
+  get kbd() { return this.#kbd }
+
+  set kbd(value) {
+    if (value < 0 || value > this.#kbdMax)
+      return
+
+    execAsync(`brightnessctl -d ${kbd} s ${value} -q`).then(() => {
+      this.#kbd = value
+      this.notify("kbd")
+    })
+  }
+
+  @getter(Boolean)
+  get hasKbd() { return this.#hasKbd }
+
+  @getter(Number)
+  get screen() {
+    return this.#screen
+  }
+
+  set screen(percent) {
+    if (percent < 0)
+      percent = 0
+
+    if (percent > 1)
+      percent = 1
+
+    this.#screen = percent
+    this.notify("screen")
+
+    if (!this.#locked) {
+      this.#locked = true
+      execAsync(`brightnessctl set ${Math.floor(this.#screen * 100)}% -q`)
+
+      setTimeout(() => {
+        execAsync(`brightnessctl set ${Math.floor(this.#screen * 100)}% -q`)
+        this.#locked = false
+      }, 33)
+    }
+  }
+
+  @getter(Boolean)
+  get hasScreen() { return this.#hasScreen }
+
+  constructor() {
+    super()
+
+    const screenPath = `/sys/class/backlight/${screen}/brightness`
+    const kbdPath = `/sys/class/leds/${kbd}/brightness`
+
+    this.#hasScreen = !!readFile(screenPath)
+    this.#hasKbd = !!readFile(kbdPath)
+
+    this.notify("has-screen")
+    this.notify("has-kbd")
+
+    monitorFile(screenPath, async f => {
+      const v = await readFileAsync(f)
+      this.#screen = Number(v) / this.#screenMax
+      this.notify("screen")
+    })
+
+    monitorFile(kbdPath, async f => {
+      const v = await readFileAsync(f)
+      this.#kbd = Number(v) / this.#kbdMax
+      this.notify("kbd")
+    })
+  }
+}

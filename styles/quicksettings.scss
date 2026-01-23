@@ -1,0 +1,96 @@
+@use './colors.scss' as *;
+
+popover.quicksettings {
+  arrow, contents, stack {
+    background-color: $bg0;
+    color: $fg0;
+  }
+
+  contents {
+    box-shadow: $shadow-lg;
+  }
+
+  .qs-button {
+    font-weight: normal;
+    padding: 0;
+    color: $fg0;
+
+    outline: none;
+    min-height: 60px;
+
+    .qs-button-box,
+    .qs-button-box-arrow,
+    .qs-button-box-arrow-inside {
+      font-weight: normal;
+      padding: 0;
+      padding-left: 10px;
+    }
+
+    .arrow,
+    .arrow-label {
+      padding: 0px;
+      min-width: 36px;
+    }
+
+    .qs-button-subtitle {
+      font-size: $font-size - 1pt;
+    }
+
+    .qs-button-box,
+    .qs-button-box-arrow,
+    .arrow,
+    .qs-button-box-arrow-inside {
+      outline: none;
+      background: rgba($bg1, $window-opacity);
+
+      &:hover {
+        background: rgba($bg2, $window-opacity);
+        transition: all $transition;
+
+        &.active {
+          color: get-contrast-color($accent-light, $fg0, $bg0);
+          background: rgba($accent-light, $window-opacity);
+        }
+      }
+
+      &:focus {
+        transition: 0s;
+        outline-offset: -$window-outline-width;
+        outline: $window-outline-width solid $window-outline-color;
+      }
+
+      &.active {
+        background: rgba($accent, $window-opacity);
+        color: get-contrast-color($accent, $fg0, $bg0);
+      }
+    }
+  }
+
+  .qs-button-box,
+  .qs-button-box-arrow-inside {
+    border-radius: $widget-radius;
+  }
+
+  .qs-button-box-arrow {
+    border-radius: $widget-radius 0 0 $widget-radius;
+  }
+
+  .arrow {
+    border-radius: 0 $widget-radius $widget-radius 0;
+  }
+
+  .slider-button {
+    border-radius: $widget-radius;
+    background: rgba($bg1, $window-opacity);
+    outline: none;
+
+    &:hover {
+      background: rgba($bg2, $window-opacity);
+    }
+    &:focus {
+      transition: 0s;
+      outline-offset: -$window-outline-width;
+      outline: $window-outline-width solid $window-outline-color;
+    }
+  }
+}

@@ -1,0 +1,116 @@
+// ============================================================================
+// Theme Variables
+// ============================================================================
+
+// Typography
+// ----------------------------------------------------------------------------
+$font-size: 14px;
+$font-family: "Inter", "Roboto", sans-serif;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+
+// Base Colors
+// ----------------------------------------------------------------------------
+$bg0: #1e1e2e;  // Darkest background (main window)
+$bg1: #2a2a3a;  // Dark background (elevated surfaces)
+$bg2: #363650;  // Medium background (hover states)
+$bg3: #494964;  // Light background (active states)
+
+$fg0: #cdd6f4;  // Primary text
+$fg1: #a6adc8;  // Secondary text
+$fg2: #6c7086;  // Dimmed text
+$fg3: #45475a;  // Disabled text
+
+// Accent Colors (Catppuccin Mocha inspired)
+// ----------------------------------------------------------------------------
+$accent: #89b4fa;       // Blue - primary accent
+$accent-light: #b4befe; // Lavender
+$accent-dim: #74c7ec;   // Sapphire
+
+$red: #f38ba8;
+$green: #a6e3a1;
+$yellow: #f9e2af;
+$orange: #fab387;
+$purple: #cba6f7;
+$pink: #f5c2e7;
+$teal: #94e2d5;
+
+// Semantic Colors
+// ----------------------------------------------------------------------------
+$success: $green;
+$warning: $yellow;
+$error: $red;
+$info: $accent;
+
+// Spacing & Sizing
+// ----------------------------------------------------------------------------
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-xxl: 24px;
+
+// Border Radius
+// ----------------------------------------------------------------------------
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-full: 9999px;
+
+
+// Borders
+// ----------------------------------------------------------------------------
+$border-width: 1px;
+$border-color: rgba($fg3, 0.2);
+$border-color-light: rgba($fg2, 0.15);
+
+// Shadows
+// ----------------------------------------------------------------------------
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+$shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+$shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+
+// Transitions
+// ----------------------------------------------------------------------------
+$transition-fast: 0.15s;
+$transition-normal: 0.2s;
+$transition-slow: 0.3s;
+$transition-easing: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+// Opacity
+// ----------------------------------------------------------------------------
+$opacity-disabled: 0.5;
+$opacity-muted: 0.7;
+$opacity-overlay: 0.95;
+
+// Bar Specific
+// ----------------------------------------------------------------------------
+$bar-height: 40px;
+$bar-margin: 0px;
+$bar-padding: 2px;
+$bar-bg: rgba($bg0, 0.95);
+$bar-item-padding: $spacing-xs;
+$bar-item-bg: transparent;
+$bar-item-bg-hover: rgba($bg2, 0.6);
+$bar-item-bg-active: rgba($accent, 0.2);
+
+// QuickSettings Specific
+// ----------------------------------------------------------------------------
+$qs-width: 360px;
+$qs-padding: 16px;
+$qs-bg: rgba($bg0, 0.97);
+$qs-slider-height: 36px;
+$qs-button-height: 48px;
+$qs-icon-size: 20px;
+
+
+$window-opacity: 1;
+$widget-radius: $radius-md;
+$window-outline-width: 1px;
+$window-outline-color: $fg1;
+$transition: $transition-fast;

@@ -1,0 +1,35 @@
+@use './colors.scss' as *;
+
+.slider-box {
+  scale {
+    padding: 0;
+
+    trough {
+      all: unset;
+      background: rgba($bg1, $window-opacity);
+      min-height: 18px;
+      border-radius: $widget-radius;
+    }
+
+    highlight {
+      all: unset;
+      min-height: 28px;
+      border-radius: $widget-radius;
+      background: rgba($accent, $window-opacity);
+    }
+
+    slider {
+      all: unset;
+      border-radius: $widget-radius;
+      margin: 0;
+    }
+
+    &:focus {
+      trough {
+        transition: 0s;
+        outline-offset: -$window-outline-width;
+        outline: $window-outline-width solid $window-outline-color;
+      }
+    }
+  }
+}

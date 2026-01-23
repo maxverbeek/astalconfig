@@ -1,2 +1,2 @@
-.direnv
-@girs
+node_modules/
+@girs/
