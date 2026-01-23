@@ -1,6 +1,4 @@
 import { Gdk, Gtk } from "ags/gtk4";
-import { onCleanup } from "ags";
-import app from "ags/gtk4/app";
 import {
   attachHoverScroll,
 } from "../lib/utils";
@@ -8,7 +6,7 @@ import { theme } from "../lib/constants";
 
 type FormatData = Record<string, JSX.Element>;
 
-type BarItemProps = JSX.IntrinsicElements["box"] & {
+export type BarItemProps = JSX.IntrinsicElements["box"] & {
   window?: string;
   children?: any;
   format?: string;
@@ -21,37 +19,6 @@ type BarItemProps = JSX.IntrinsicElements["box"] & {
 };
 
 const isVertical = theme.bar.orientation === Gtk.Orientation.VERTICAL
-
-function parseFormat(format: string, data: FormatData): JSX.Element[] {
-  const regex = /\{([^:}]+):?([^}]*)\}|([^{}]+)/g;
-
-  return format
-    .split(" ")
-    .filter((group) => group.trim() !== "")
-    .map((group) => {
-      const matches = Array.from(group.matchAll(regex));
-
-      const elements = matches.map((match) => {
-        const [_, key, size, text] = match;
-
-        if (key) {
-          const trimmedKey = key.trim();
-          if (data && trimmedKey in data) {
-            return data[trimmedKey];
-          }
-          return <label label={`{${trimmedKey}}`} hexpand={isVertical} />;
-        }
-
-        return <label label={text} hexpand={isVertical} />;
-      });
-
-      if (elements.length === 1) {
-        return elements[0];
-      }
-
-      return <box>{elements}</box>;
-    });
-}
 
 function handleClick(
   button: number,
@@ -91,7 +58,6 @@ function handleScroll(
 }
 
 export default function BarItem({
-  window = "",
   children,
   format,
   data = {},
@@ -102,26 +68,13 @@ export default function BarItem({
   onScrollDown = "default",
   ...rest
 }: BarItemProps) {
-  const content = format ? parseFormat(format, data) : children;
-
   return (
     <box
       class={"bar-item"}
       $={(self) => {
-        if (window) {
-          const appconnect = app.connect("window-toggled", (_, win) => {
-            if (win.name === window) {
-              self[win.visible ? "add_css_class" : "remove_css_class"](
-                "active",
-              );
-            }
-          });
-          onCleanup(() => app.disconnect(appconnect));
-
-          attachHoverScroll(self, ({ dy }) => {
-            handleScroll(dy, onScrollUp, onScrollDown);
-          });
-        }
+        attachHoverScroll(self, ({ dy }) => {
+          handleScroll(dy, onScrollUp, onScrollDown);
+        });
       }}
       {...rest}
     >
@@ -142,7 +95,7 @@ export default function BarItem({
         spacing={theme.bar.spacing}
         hexpand={isVertical}
       >
-        {content}
+        {children}
       </box>
     </box>
   );

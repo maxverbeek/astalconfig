@@ -1,48 +1,33 @@
-import app from "ags/gtk4/app"
-import { Astal, Gtk, Gdk } from "ags/gtk4"
-import { execAsync } from "ags/process"
+import { Gtk, Gdk } from "ags/gtk4"
 import { createPoll } from "ags/time"
 import { QuickSettingsModule } from "@/modules/quicksettings/quicksettings"
+import NiriWorkspaces from "./NiriWorkspaces"
 
-export default function Bar(gdkmonitor: Gdk.Monitor) {
+type BarProps = {
+  gdkmonitor: Gdk.Monitor
+}
+
+export default function Bar({ gdkmonitor }: BarProps) {
   const time = createPoll("", 1000, "date")
-  const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
 
   return (
-    <window
-      visible
-      name="bar"
-      class="Bar"
-      gdkmonitor={gdkmonitor}
-      exclusivity={Astal.Exclusivity.EXCLUSIVE}
-      anchor={TOP | LEFT | RIGHT}
-      application={app}
-    >
-      <centerbox cssName="centerbox">
-        <button
-          $type="start"
-          onClicked={() => execAsync("echo hello").then(console.log)}
-          hexpand
-          halign={Gtk.Align.CENTER}
-        >
-          <label label="Welcome to AGS!" />
-        </button>
-        <box $type="center" />
-        <box $type="end">
-          <menubutton>
-            <label label="quicksettings" />
-            <popover class="quicksettings" autohide={false}>
-              <QuickSettingsModule />
-            </popover>
-          </menubutton>
-          <menubutton hexpand halign={Gtk.Align.CENTER}>
-            <label label={time} />
-            <popover>
-              <Gtk.Calendar />
-            </popover>
-          </menubutton>
-        </box>
-      </centerbox>
-    </window>
+    <centerbox cssName="centerbox">
+      <NiriWorkspaces $type="start" gdkmonitor={gdkmonitor} />
+      <box $type="center" />
+      <box $type="end">
+        <menubutton>
+          <label label="quicksettings" />
+          <popover class="quicksettings" autohide={false}>
+            <QuickSettingsModule />
+          </popover>
+        </menubutton>
+        <menubutton hexpand halign={Gtk.Align.CENTER}>
+          <label label={time} />
+          <popover>
+            <Gtk.Calendar />
+          </popover>
+        </menubutton>
+      </box>
+    </centerbox>
   )
 }
