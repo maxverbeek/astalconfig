@@ -2,6 +2,8 @@ import { Gdk, Gtk } from "ags/gtk4";
 import app from "ags/gtk4/app";
 import AstalApps from "gi://AstalApps?version=0.1";
 import AstalNiri from "gi://AstalNiri?version=0.1";
+import { Accessor, createBinding, createComputed } from "gnim";
+import { icons } from "./constants";
 
 type ScrollInfo = {
   dx: number;
@@ -122,18 +124,21 @@ export function getAppInfo(appId: string): AstalApps.Application | null {
   return match;
 }
 
-export function guessBarIcon(win: AstalNiri.Window): string {
+export function guessBarIcon(win: AstalNiri.Window): Accessor<string> {
   const appInfo = getAppInfo(win.app_id)
+  const title = createBinding(win, "title")
 
-  if (win.title.endsWith('Nvim')) {
-    return 'neovim'
-  }
+  return createComputed(() => {
+    if (title().toLowerCase().endsWith("nvim")) {
+      return "neovim"
+    }
 
-  if (!appInfo) {
-    return "unknown-app-symbolic"
-  }
+    if (!appInfo?.icon_name) {
+      return icons.workspaces.unknown_icon
+    }
 
-  return appInfo.icon_name
+    return appInfo.icon_name
+  })
 }
 
 export function throttle<T extends (...args: any[]) => any>(

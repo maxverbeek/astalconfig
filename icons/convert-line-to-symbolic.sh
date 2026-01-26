@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for f in *.svg; do
+for f in lucide-*.svg; do
   if [[ "$f" == *"-symbolic.svg" ]]; then
     continue
   fi

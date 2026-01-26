@@ -25,6 +25,7 @@ type WorkspaceProps = {
 
 function Workspace({ workspace }: WorkspaceProps) {
   const windows = createBinding(workspace, "windows")
+
   return <box>
     <label label={createBinding(workspace, "idx").as(String)} />
     <box>

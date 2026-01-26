@@ -37,6 +37,10 @@ export const icons = {
     shutdown: "ds-power-symbolic",
   },
 
+  workspaces: {
+    unknown_icon: "lucide-asterisk-symbolic"
+  },
+
   check: 'check',
   bluetooth: 'lucide-bluetooth-symbolic',
   refresh: 'lucide-refresh-cw-symbolic',
