@@ -78,7 +78,9 @@ function BluetoothIcon() {
   return <image class={klass} icon_name={icon} />
 }
 
-export const batteryFlashClass = createBinding(battery, 'percentage')(p => p < 0.1 ? 'battery-critical-bgflash' : '')
+const batteryCritical = createBinding(battery, 'percentage')(p => p < 0.1)
+const charging = createBinding(battery, 'charging')
+export const batteryFlashClass = createComputed(() => batteryCritical() && !charging())(shouldflash => shouldflash ? 'battery-critical-bgflash' : '')
 
 export default function QuicksettingsBarButton() {
   const [hovered, setHovered] = createState(false)
