@@ -17,7 +17,7 @@
   margin: $bar-item-margin;
   border-radius: $bar-item-radius;
 
-  &:hover {
+  &:not(.no-hover):hover {
     background: $surface-container-high;
   }
 
@@ -50,4 +50,8 @@
 
 .bluetooth-icon.connected {
   color: $blue;
+}
+
+.tray-button, .tray-button > button {
+  all: unset;
 }

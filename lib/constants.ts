@@ -1,10 +1,9 @@
 import { Gtk } from "ags/gtk4";
-import { indexForLevel } from "./utils";
 
 export const theme = {
   bar: {
     spacing: 10,
-    itemspacing: 5,
+    itemspacing: 6,
     height: 40,
     orientation: Gtk.Orientation.HORIZONTAL,
   },
@@ -31,6 +30,7 @@ export const theme = {
   },
 
   "icon-size": {
+    small: 16,
     normal: 24,
   }
 }
@@ -73,7 +73,8 @@ export const icons = {
       'lucide-battery-full-symbolic',
     ],
 
-    levels: [0, 0.1, 0.25, 0.4, 0.75],
+    // interpretation: larger than 0 -> order[0].. larger than 0.1 -> order[1].. larger than 0.25 -> order[2] etc.
+    levels: [0, 0.1, 0.25, 0.45, 0.75],
 
     charging: 'lucide-battery-charging-symbolic',
   },
@@ -90,5 +91,10 @@ export const icons = {
 
     off: 'lucide-wifi-off-symbolic',
     syncing: 'lucide-wifi-sync-symbolic',
+  },
+
+  sound: {
+    headphones: 'lucide-headphones-symbolic',
+    microphone: 'lucide-microphone-symbolic',
   }
 }

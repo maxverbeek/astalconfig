@@ -14,7 +14,7 @@ export default function VolumeSlider() {
     <box spacing={theme.spacing}>
       <QSSlider
         level={level}
-        icon={speaker.icon}
+        icon={icons.sound.headphones}
         onChangeValue={(value) => speaker.set_volume(value)}
       />
       <button

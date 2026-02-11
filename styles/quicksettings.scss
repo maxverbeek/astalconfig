@@ -93,4 +93,8 @@ popover.quicksettings {
       outline: $window-outline-width solid $window-outline-color;
     }
   }
+
+  .default-audio-device {
+    color: $green;
+  }
 }

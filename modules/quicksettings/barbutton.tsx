@@ -82,13 +82,14 @@ const batteryCritical = createBinding(battery, 'percentage')(p => p < 0.1)
 const charging = createBinding(battery, 'charging')
 export const batteryFlashClass = createComputed(() => batteryCritical() && !charging())(shouldflash => shouldflash ? 'battery-critical-bgflash' : '')
 
-export default function QuicksettingsBarButton() {
+export default function QuicksettingsBarButton({ opened }: { opened: Accessor<boolean> }) {
   const [hovered, setHovered] = createState(false)
+  const expanded = createComputed(() => hovered() || opened())
 
   return <box spacing={theme.bar.itemspacing}>
     <Gtk.EventControllerMotion onEnter={() => setHovered(true)} onLeave={() => setHovered(false)} />
-    <BatteryIcon hovered={hovered} />
-    <WifiIcon hovered={hovered} />
+    <BatteryIcon hovered={expanded} />
+    <WifiIcon hovered={expanded} />
     <BluetoothIcon />
   </box>
 }

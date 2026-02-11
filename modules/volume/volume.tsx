@@ -132,6 +132,7 @@ function DefaultOutput() {
           <For each={speakers}>
             {(speaker) => (
               <button
+                class={createBinding(speaker, 'is_default')(d => d ? 'default-audio-device' : '')}
                 onClicked={() => {
                   speaker.set_is_default(true);
                   popover.hide();
@@ -209,6 +210,7 @@ function DefaultMicrophone() {
           <For each={microphones}>
             {(microphone) => (
               <button
+                class={createBinding(microphone, 'is_default')(d => d ? 'default-audio-device' : '')}
                 onClicked={() => {
                   microphone.set_is_default(true);
                   popover.hide();

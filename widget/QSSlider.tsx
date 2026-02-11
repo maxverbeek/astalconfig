@@ -22,7 +22,7 @@ export function QSSlider({
       <image
         $type={"overlay"}
         iconName={icon}
-        pixelSize={theme["icon-size"].normal}
+        pixelSize={theme["icon-size"].small}
         valign={Gtk.Align.CENTER}
         halign={Gtk.Align.START}
       />
