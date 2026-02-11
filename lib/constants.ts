@@ -73,8 +73,11 @@ export const icons = {
       'lucide-battery-full-symbolic',
     ],
 
-    // interpretation: larger than 0 -> order[0].. larger than 0.1 -> order[1].. larger than 0.25 -> order[2] etc.
-    levels: [0, 0.1, 0.25, 0.45, 0.75],
+    // interpretation: larger than 0 -> order[0].. larger than 0.1 -> order[1].. larger than 0.25 -> order[2] etc...
+    // these values are weird because the battery icon has 3 cells and im choosing switch point so that the actual battery
+    // value is closest to the value that a cell represents (1/3, 2/3, 3/3) with some outliers at the bottom because
+    // there are some critical icons.
+    levels: [0, 0.1, 1 / 6, 0.5, 5 / 6],
 
     charging: 'lucide-battery-charging-symbolic',
   },
