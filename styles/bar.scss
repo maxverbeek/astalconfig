@@ -1,0 +1,53 @@
+@use './colors.scss' as *;
+
+.bar {
+  background: $bar-bg;
+  padding: $bar-padding;
+  min-height: $bar-height;
+}
+
+.bar-item {
+  & > button {
+    all: unset;
+  }
+
+  background: $surface-container;
+  color: $on-surface;
+  padding: $bar-item-padding;
+  margin: $bar-item-margin;
+  border-radius: $bar-item-radius;
+
+  &:hover {
+    background: $surface-container-high;
+  }
+
+  &.active {
+    background: rgba($primary, 0.2);
+  }
+}
+
+.battery-icon {
+  &.low:not(.charging) {
+    color: $yellow;
+  }
+
+  &.verylow:not(.charging) {
+    color: $orange;
+  }
+
+  &.critical:not(.charging) {
+    color: $red;
+  }
+
+  &.charging {
+    color: $green;
+  }
+}
+
+.battery-critical-bgflash {
+  animation: flash-red 4s ease infinite;
+}
+
+.bluetooth-icon.connected {
+  color: $blue;
+}

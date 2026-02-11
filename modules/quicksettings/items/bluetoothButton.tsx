@@ -16,7 +16,7 @@ export default function BluetoothButton() {
 
   return (
     <QSButton
-      icon={icons.bluetooth}
+      icon={icons.bluetooth.on}
       label={"Bluetooth"}
       subtitle={device((d) => (d ? d.alias : "None"))}
       arrow={"separate"}

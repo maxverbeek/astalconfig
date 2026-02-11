@@ -6,7 +6,7 @@
 
     trough {
       all: unset;
-      background: rgba($bg1, $window-opacity);
+      background: rgba($surface-container, $window-opacity);
       min-height: 18px;
       border-radius: $widget-radius;
     }
@@ -15,7 +15,7 @@
       all: unset;
       min-height: 28px;
       border-radius: $widget-radius;
-      background: rgba($accent, $window-opacity);
+      background: rgba($primary, $window-opacity);
     }
 
     slider {

@@ -3,6 +3,7 @@ import {
   attachHoverScroll,
 } from "../lib/utils";
 import { theme } from "../lib/constants";
+import { createComputed } from "gnim";
 
 type FormatData = Record<string, JSX.Element>;
 
@@ -36,9 +37,10 @@ function handleClick(
 
   if (typeof handler === "function") {
     handler();
+    return
   }
 
-  console.warn(`cannot execute ${handler}`)
+  console.warn(`cannot execute ${handler}, type ${typeof handler}`)
 }
 
 function handleScroll(
@@ -92,7 +94,6 @@ export default function BarItem({
       <box
         class={"content"}
         orientation={theme.bar.orientation}
-        spacing={theme.bar.spacing}
         hexpand={isVertical}
       >
         {children}

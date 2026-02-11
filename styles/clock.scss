@@ -1,0 +1,9 @@
+@use './colors.scss' as *;
+
+.clock {
+  color: $on-surface;
+
+  .time {
+    font-weight: bold;
+  }
+}

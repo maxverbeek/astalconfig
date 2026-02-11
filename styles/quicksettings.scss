@@ -2,8 +2,8 @@
 
 popover.quicksettings {
   arrow, contents, stack {
-    background-color: $bg0;
-    color: $fg0;
+    background-color: $surface;
+    color: $on-surface;
   }
 
   contents {
@@ -13,7 +13,7 @@ popover.quicksettings {
   .qs-button {
     font-weight: normal;
     padding: 0;
-    color: $fg0;
+    color: $on-surface;
 
     outline: none;
     min-height: 60px;
@@ -41,15 +41,15 @@ popover.quicksettings {
     .arrow,
     .qs-button-box-arrow-inside {
       outline: none;
-      background: rgba($bg1, $window-opacity);
+      background: rgba($surface-container, $window-opacity);
 
       &:hover {
-        background: rgba($bg2, $window-opacity);
+        background: rgba($surface-container-high, $window-opacity);
         transition: all $transition;
 
         &.active {
-          color: get-contrast-color($accent-light, $fg0, $bg0);
-          background: rgba($accent-light, $window-opacity);
+          color: $on-secondary;
+          background: rgba($secondary, $window-opacity);
         }
       }
 
@@ -60,8 +60,8 @@ popover.quicksettings {
       }
 
       &.active {
-        background: rgba($accent, $window-opacity);
-        color: get-contrast-color($accent, $fg0, $bg0);
+        background: $primary;
+        color: $on-primary;
       }
     }
   }
@@ -81,11 +81,11 @@ popover.quicksettings {
 
   .slider-button {
     border-radius: $widget-radius;
-    background: rgba($bg1, $window-opacity);
+    background: rgba($surface-container, $window-opacity);
     outline: none;
 
     &:hover {
-      background: rgba($bg2, $window-opacity);
+      background: rgba($surface-container-high, $window-opacity);
     }
     &:focus {
       transition: 0s;

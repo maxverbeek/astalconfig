@@ -1,0 +1,10 @@
+@use './colors.scss' as *;
+
+// icons in the .bar-item
+.window-icons {
+
+  image.focused {
+    background: $surface-container-highest;
+  }
+
+}

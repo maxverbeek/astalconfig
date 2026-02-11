@@ -180,3 +180,15 @@ export function throttle<T extends (...args: any[]) => any>(
     }
   };
 }
+
+export function indexForLevel(actual: number, levels: number[]): number {
+  return levels.findLastIndex((level) => actual >= level)
+}
+
+export function batteryIconFn(level: number): string {
+  return icons.battery.order[indexForLevel(level, icons.battery.levels)]
+}
+
+export function wifiIconFn(level: number): string {
+  return icons.wifi.order[indexForLevel(level, icons.wifi.levels)]
+}

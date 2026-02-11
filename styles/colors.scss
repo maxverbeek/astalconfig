@@ -1,5 +1,5 @@
 // ============================================================================
-// Theme Variables
+// Theme Variables — Kanagawa Wave + Material Design 3 Color Roles
 // ============================================================================
 
 // Typography
@@ -11,38 +11,57 @@ $font-weight-medium: 500;
 $font-weight-bold: 700;
 
 
-// Base Colors
+// Surface Hierarchy
 // ----------------------------------------------------------------------------
-$bg0: #1e1e2e;  // Darkest background (main window)
-$bg1: #2a2a3a;  // Dark background (elevated surfaces)
-$bg2: #363650;  // Medium background (hover states)
-$bg3: #494964;  // Light background (active states)
+$surface:                   #1F1F28; // sumiInk3 — Default background
+$surface-dim:               #16161D; // sumiInk0 — Deepest bg (floats, overlays)
+$surface-container:         #2A2A37; // sumiInk4 — Elevated surfaces
+$surface-container-high:    #363646; // sumiInk5 — Hover states
+$surface-container-highest: #54546D; // sumiInk6 — Active states
 
-$fg0: #cdd6f4;  // Primary text
-$fg1: #a6adc8;  // Secondary text
-$fg2: #6c7086;  // Dimmed text
-$fg3: #45475a;  // Disabled text
-
-// Accent Colors (Catppuccin Mocha inspired)
+// On-Surface (text/icons on surface backgrounds)
 // ----------------------------------------------------------------------------
-$accent: #89b4fa;       // Blue - primary accent
-$accent-light: #b4befe; // Lavender
-$accent-dim: #74c7ec;   // Sapphire
+$on-surface:         #DCD7BA; // fujiWhite  — Primary text
+$on-surface-variant: #C8C093; // oldWhite   — Secondary text
+$on-surface-muted:   #727169; // fujiGray   — Disabled/comment text
+$outline:            #54546D; // sumiInk6   — Borders, separators
+$outline-variant:    #363646; // sumiInk5   — Subtle borders
 
-$red: #f38ba8;
-$green: #a6e3a1;
-$yellow: #f9e2af;
-$orange: #fab387;
-$purple: #cba6f7;
-$pink: #f5c2e7;
-$teal: #94e2d5;
-
-// Semantic Colors
+// Primary Accent
 // ----------------------------------------------------------------------------
-$success: $green;
-$warning: $yellow;
-$error: $red;
-$info: $accent;
+$primary:              #7E9CD8; // crystalBlue — Primary accent
+$on-primary:           #1F1F28; // sumiInk3   — Text on solid primary bg
+$primary-container:    #2D4F67; // waveBlue2  — Soft accent bg (selection)
+$on-primary-container: #7FB4CA; // springBlue — Text on primary-container
+
+// Secondary Accent
+// ----------------------------------------------------------------------------
+$secondary:              #957FB8; // oniViolet     — Secondary accent
+$on-secondary:           #1F1F28; // sumiInk3      — Text on solid secondary bg
+$secondary-container:    #223249; // waveBlue1     — Secondary container bg
+$on-secondary-container: #938AA9; // springViolet1 — Text on secondary-container
+
+// Named Palette Colors (Kanagawa raw palette)
+// ----------------------------------------------------------------------------
+$red:    #E46876; // waveRed
+$green:  #98BB6C; // springGreen
+$yellow: #E6C384; // carpYellow
+$orange: #FFA066; // surimiOrange
+$purple: #957FB8; // oniViolet
+$pink:   #D27E99; // sakuraPink
+$teal:   #7AA89F; // waveAqua2
+$blue:   #7FB4CA; // springBlue
+
+// Semantic Colors (with on- pairs)
+// ----------------------------------------------------------------------------
+$success:    #76946A; // autumnGreen
+$on-success: #DCD7BA;
+$warning:    #FF9E3B; // roninYellow
+$on-warning: #1F1F28;
+$error:      #E82424; // samuraiRed
+$on-error:   #DCD7BA;
+$info:       $primary;
+$on-info:    $on-primary;
 
 // Spacing & Sizing
 // ----------------------------------------------------------------------------
@@ -65,8 +84,8 @@ $radius-full: 9999px;
 // Borders
 // ----------------------------------------------------------------------------
 $border-width: 1px;
-$border-color: rgba($fg3, 0.2);
-$border-color-light: rgba($fg2, 0.15);
+$border-color: rgba($outline, 0.3);
+$border-color-light: rgba($outline-variant, 0.15);
 
 // Shadows
 // ----------------------------------------------------------------------------
@@ -90,20 +109,22 @@ $opacity-overlay: 0.95;
 
 // Bar Specific
 // ----------------------------------------------------------------------------
-$bar-height: 40px;
+$bar-height: 20px;
 $bar-margin: 0px;
-$bar-padding: 2px;
-$bar-bg: rgba($bg0, 0.95);
-$bar-item-padding: $spacing-xs;
+$bar-padding: 2px 6px;
+$bar-bg: $surface;
+$bar-item-padding: 0px 8px;
+$bar-item-margin: 4px 0;
 $bar-item-bg: transparent;
-$bar-item-bg-hover: rgba($bg2, 0.6);
-$bar-item-bg-active: rgba($accent, 0.2);
+$bar-item-bg-hover: rgba($surface-container-high, 0.6);
+$bar-item-bg-active: rgba($primary, 0.2);
+$bar-item-radius: $radius-full;
 
 // QuickSettings Specific
 // ----------------------------------------------------------------------------
 $qs-width: 360px;
 $qs-padding: 16px;
-$qs-bg: rgba($bg0, 0.97);
+$qs-bg: rgba($surface, 0.97);
 $qs-slider-height: 36px;
 $qs-button-height: 48px;
 $qs-icon-size: 20px;
@@ -112,5 +133,16 @@ $qs-icon-size: 20px;
 $window-opacity: 1;
 $widget-radius: $radius-md;
 $window-outline-width: 1px;
-$window-outline-color: $fg1;
+$window-outline-color: $on-surface-variant;
 $transition: $transition-fast;
+
+@keyframes flash-red {
+  25% { 
+    background-color: $error;
+  }
+
+  // slows the animation by half, because it does nothing for the remainder of the duration.
+  50% {
+    background-color: $surface-container;
+  }
+}
