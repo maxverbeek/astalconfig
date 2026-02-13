@@ -32,6 +32,12 @@ export const theme = {
   "icon-size": {
     small: 16,
     normal: 24,
+  },
+
+  usage: {
+    revealThreshold: 0.8,
+    mediumThreshold: 0.6,
+    highThreshold: 0.9,
   }
 }
 
@@ -63,6 +69,8 @@ export const icons = {
   },
   refresh: 'lucide-refresh-cw-symbolic',
   brightness: 'lucide-sun-symbolic',
+  cpu: 'lucide-cpu-symbolic',
+  memory: 'lucide-memory-symbolic',
 
   battery: {
     order: [

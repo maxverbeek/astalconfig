@@ -7,6 +7,7 @@ import { theme } from "@/lib/constants"
 import { createComputed, createState } from "gnim"
 import Tray from "./Tray"
 import KubernetesContext from "./KubernetesContext"
+import ResourceUsage from "./ResourceUsage"
 
 type BarProps = {
   gdkmonitor: Gdk.Monitor
@@ -20,6 +21,7 @@ export default function Bar({ gdkmonitor }: BarProps) {
     <centerbox height_request={theme.bar.height} cssName="centerbox" class="bar">
       <NiriWorkspaces $type="start" gdkmonitor={gdkmonitor} />
       <box $type="end" spacing={theme.bar.spacing}>
+        <ResourceUsage />
         <KubernetesContext />
         <menubutton class={menuClass}>
           <QuicksettingsBarButton opened={qsopened} />

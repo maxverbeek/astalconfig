@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   fill="none"
+   stroke="currentColor"
+   stroke-width="2"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   class="lucide lucide-cpu-icon lucide-cpu"
+   version="1.1"
+   id="svg13"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs13" />
+  <path
+     id="path1"
+     style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#000000;stroke:none;stroke-linecap:butt;stroke-linejoin:miter;enable-background:accumulate;stop-color:#000000;stop-opacity:1;opacity:1"
+     d="M 7 1 A 1 1 0 0 0 6 2 L 6 3 C 4.3552972 3 3 4.3552972 3 6 L 2 6 A 1 1 0 0 0 1 7 A 1 1 0 0 0 2 8 L 3 8 L 3 11 L 2 11 A 1 1 0 0 0 1 12 A 1 1 0 0 0 2 13 L 3 13 L 3 16 L 2 16 A 1 1 0 0 0 1 17 A 1 1 0 0 0 2 18 L 3 18 C 3 19.644703 4.3552972 21 6 21 L 6 22 A 1 1 0 0 0 7 23 A 1 1 0 0 0 8 22 L 8 21 L 11 21 L 11 22 A 1 1 0 0 0 12 23 A 1 1 0 0 0 13 22 L 13 21 L 16 21 L 16 22 A 1 1 0 0 0 17 23 A 1 1 0 0 0 18 22 L 18 21 C 19.644703 21 21 19.644703 21 18 L 22 18 A 1 1 0 0 0 23 17 A 1 1 0 0 0 22 16 L 21 16 L 21 13 L 22 13 A 1 1 0 0 0 23 12 A 1 1 0 0 0 22 11 L 21 11 L 21 8 L 22 8 A 1 1 0 0 0 23 7 A 1 1 0 0 0 22 6 L 21 6 C 21 4.3552972 19.644703 3 18 3 L 18 2 A 1 1 0 0 0 17 1 A 1 1 0 0 0 16 2 L 16 3 L 13 3 L 13 2 A 1 1 0 0 0 12 1 A 1 1 0 0 0 11 2 L 11 3 L 8 3 L 8 2 A 1 1 0 0 0 7 1 z M 6 5 L 18 5 C 18.571297 5 19 5.4287028 19 6 L 19 18 C 19 18.571297 18.571297 19 18 19 L 6 19 C 5.4287028 19 5 18.571297 5 18 L 5 6 C 5 5.4287028 5.4287028 5 6 5 z M 9 7 C 7.9092972 7 7 7.9092972 7 9 L 7 15 C 7 16.090703 7.9092972 17 9 17 L 15 17 C 16.090703 17 17 16.090703 17 15 L 17 9 C 17 7.9092972 16.090703 7 15 7 L 9 7 z M 9 9 L 15 9 L 15 15 L 9 15 L 9 9 z " />
+</svg>
