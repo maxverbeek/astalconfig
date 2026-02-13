@@ -25,7 +25,7 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       pname = "my-shell";
-      entry = "app.ts";
+      entry = "app.tsx";
 
       astalPackages = with ags.packages.${system}; [
         io
