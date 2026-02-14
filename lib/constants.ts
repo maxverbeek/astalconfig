@@ -8,6 +8,12 @@ export const theme = {
     orientation: Gtk.Orientation.HORIZONTAL,
   },
 
+  notifications: {
+    spacebetween: 16,
+    spacing: 8,
+    timeoutseconds: 3,
+  },
+
   quicksettings: {
     transitionDuration: 200,
     buttonwidth: 200,
@@ -61,6 +67,8 @@ export const icons = {
   },
 
   check: 'check',
+  close: 'lucide-x-symbolic',
+
   bluetooth: {
     on: 'lucide-bluetooth-symbolic',
     off: 'lucide-bluetooth-off-symbolic',

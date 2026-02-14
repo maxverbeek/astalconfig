@@ -55,3 +55,19 @@
 .tray-button, .tray-button > button {
   all: unset;
 }
+
+.resource-usage {
+  image + revealer {
+    label {
+      margin-left: $spacing-xs;
+    }
+  }
+
+  .medium image {
+    color: $orange;
+  }
+
+  .high image {
+    color: $red;
+  }
+}

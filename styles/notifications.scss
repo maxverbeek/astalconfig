@@ -1,0 +1,24 @@
+@use './colors.scss' as *;
+
+.notifications {
+  margin: $spacing-xl;
+
+  .notification {
+    background: $surface;
+    border-radius: $radius-md;
+    padding: $spacing-sm 0;
+    border: $border-width solid $border-color;
+  }
+
+  .header, .content, .actions {
+    padding: 0 $spacing-sm;
+  }
+
+  .header {
+    font-weight: bold;
+  }
+
+  .body {
+    color: $on-surface-variant;
+  }
+}

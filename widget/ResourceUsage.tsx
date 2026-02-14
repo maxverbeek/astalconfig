@@ -35,7 +35,7 @@ export default function ResourceUsage() {
 
   return <BarItem class="bar-item no-hover">
     <Gtk.EventControllerMotion onEnter={() => setHovered(true)} onLeave={() => setHovered(false)} />
-    <box spacing={theme.bar.itemspacing}>
+    <box spacing={theme.bar.itemspacing} class="resource-usage">
       <box class={cpuClass}>
         <image icon_name={icons.cpu} />
         <revealer transition_duration={200} transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT} reveal_child={revealCpu}>

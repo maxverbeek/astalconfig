@@ -6,7 +6,7 @@ import VolumeButton from "./items/volumeButton";
 import MicrophoneButton from "./items/microphoneButton";
 
 export function QSButtons() {
-  const buttons = [<NetworkButton />, <BluetoothButton />, <VolumeButton />, <MicrophoneButton />]
+  const buttons = [<VolumeButton />, <MicrophoneButton />, <NetworkButton />, <BluetoothButton />]
 
   return (
     <Adw.WrapBox
