@@ -8,6 +8,16 @@ Eternally work in progress.. Currently contains:
 - Tray
 - CPU & Memory usage
 
+## Disclaimer
+
+I rewrote this entirely in Gtk4 taking heavy inspiration from [delta-shell](https://github.com/sinomor/delta-shell).
+Some parts of this bar are copied verbatim from that project. Most of that has been slightly modified to match my own
+preferences. This project, unlike delta-shell, is not intended for people to use for themselves. Of course while you are
+free to do so, I cannot help you if stuff doesn't work. That said, the out of the box experience with Nix should be
+pretty good, and there are no external dependencies (shell scripts etc that are being called) beyond the Astal libraries
+that are bundled via Nix. If something doesn't work you are free to make an issue or a pull request, but no guarantees
+that I have time to look at it.
+
 ## Workspaces (left side of the bar)
 
 ![image](https://github.com/user-attachments/assets/622fbbf1-b048-4ba0-af14-baaafdb6bdb8)
@@ -20,45 +30,33 @@ however:
 - Inside of each workspace group, display the index (matches the keybinds that I set up in my niri config, Super+123456789)
 - For each application running in a workspace, also display the icon of that application so that I can get an overview of what
   is running where.
+- The applications on each workspace are ordered by position
+- The currently active application icon is highlighted so you know where you are in the workspace.
 
 ## Bar components (right side of the bar)
 
 ![image](https://github.com/user-attachments/assets/27f5021e-6fa2-4d30-b12b-2c7a81bfeba6)
 
-The "islands" in the bar are implemented here (from left to right)
+- `ResourceUsage.tsx`
+  Shows CPU and memory usage. When CPU or memory are not excessively used this component folds to just the icons. It
+  reveals the percentages on hover, or if the usage becomes large.
 
-- `./widgets/ResourceUsage.tsx`
-  
-  Displays CPU & Memory usage. It expands on hover or when values reach a certain threshold (when they become interesting to look at). Might add
-  network information in the future (current bandwidth usage?). There is some CSS to change the colours when usage increases.
-  
-- `./widgets/CurrentCluster.tsx`
+- `KubernetesContext.tsx`
+  I put the kubernetes cluster that my `kubectl` points to on the bar so that I can easily see whether I'm going to break a
+  staging cluster or a production cluster ;). This is updated by a file monitor on `~/.kube/config` so it doesn't invoke
+  kubectl many times.
 
-  Displays the cluster that Kubectl currently points at. Very useful when switching between different clusters frequently. Might decide to move
-  this to my terminal prompt at some point, but for now I like it here.
+- `modules/quicksettings/barbutton.tsx`
+  Opens the quicksettings menu. I should probably organise the directory structure a bit better.. This just shows
+  battery, wifi and bluetooth status. Click on it to open the menu..
 
-- `./widgets/LaptopStuff.tsx` (not shown in the screenshot)
+- `Tray.tsx`
+  Tray stuff.. may get rid of this if my quicksettings menu becomes good enough (still cannot select a VPN using
+  AstalNetwork).
 
-  Displays Wifi information, as well as battery & brightness percentages. I implemented a flashy animation (literally) when the battery is almost empty.
+- `Clock.tsx`
+  Format is configurable in constants.tsx
 
-- `./widgets/AudioBluetooth.tsx`
-
-  Contains bluetooth and audio indicators. I mixed bluetooth and audio settings because I mostly use bluetooth for headphones/headsets. This also serves
-  as a button to open a menu to connect to new devices & switch input sources (very useful for plugging in new microphones during meetings).
-
-- `./widgets/Tray.tsx`
-
-  The tray is pretty much copied from the Astal example, I didn't really change anything
-
-- `./widgets/DateTime.tsx`
-
-  Displays date & time in the format that I always used since I first started writing dotfiles, also not super interesting
-
-The menu that is opened by the AudioBluetooth island button is implemented in `./windows/BluetoothMenu.tsx` (10/10 naming). What is interesting is that it
-also uses Upowerd (the battery observer daemon used mostly on laptops) on my desktop (no battery) to keep track of battery levels of bluetooth devices.
-It can then display that (if available) in the menu as well which is super useful. I really want to replace that window with a GtkPopover so that I don't
-have to position it to the top-right of my screen, and can instead align it to the button widget that opens it. But alas, I tried to get popovers to work
-for 10 minutes and failed, so I will wait until someone else does this in gtk3 typescript.
 
 ## NixOS
 
@@ -97,19 +95,7 @@ I personally run this stuff through a systemd service using the following system
     Service = {
       ExecStart = "${pkgs.ags-max}/bin/ags-max";
       Restart = "always";
-      RestartSec = "5s";
-
-      # disable logging for this, because child apps (such as anything i launch
-      # with the launcher) will end up logging here, and chrome is super
-      # verbose + may log sensitive info
-      StandardOutput = "null";
-      StandardError = "null";
-
-      # Add environment variables for xwayland-satellite so that stuff started
-      # through here can use Xwayland through this.
-      # FIXME: the value for this is set in system configuration but i cannot
-      # access that from home configuration
-      Environment = [ "DISPLAY=:0" ];
+      RestartSec = "1s";
     };
   };
 }
