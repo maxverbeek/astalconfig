@@ -1,7 +1,7 @@
 import app from "ags/gtk4/app"
 import style from "./styles/index.scss"
 import Bar from "./widget/Bar"
-import { createBinding, createComputed, createEffect, createState, For, onCleanup, This } from "ags"
+import { createBinding, createComputed, createState, For, onCleanup, This } from "ags"
 import { Astal, Gtk } from "ags/gtk4"
 import AstalNotifd from "gi://AstalNotifd?version=0.1"
 import Notification from "./widget/Notification"
@@ -84,6 +84,7 @@ function main() {
 }
 
 app.start({
+  instanceName: INSTANCE_NAME ?? 'ags',
   css: style,
   icons: `${SRC}/icons`,
   main,

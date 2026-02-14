@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
 
+    # hopefully this will be upstreamed at some point
     astal-niri.url = "github:sameoldlab/astal?ref=feat/niri";
     astal-niri.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -24,12 +25,12 @@
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      pname = "my-shell";
+      pname = "maxags";
       entry = "app.tsx";
 
       astalPackages = with ags.packages.${system}; [
         io
-        astal4 # or astal3 for gtk3
+        astal4
         apps
         bluetooth
         battery
@@ -67,7 +68,7 @@
             mkdir -p $out/bin
             mkdir -p $out/share
             cp -r * $out/share
-            ags bundle ${entry} $out/bin/${pname} -d "SRC='$out/share'"
+            ags bundle ${entry} $out/bin/${pname} -d "SRC='$out/share'" -d "INSTANCE_NAME='${pname}'"
 
             runHook postInstall
           '';
