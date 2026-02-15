@@ -83,8 +83,19 @@ function main() {
   NotificationWindow()
 }
 
+// instance name is defined as a string in env.d.ts and it is provided in the bundle script (see flake.nix). This is
+// intentionally set to something else so that during development (when this defaults to 'ags') we can run two instances
+// side by side.
+function getInstanceName(): string {
+  if (typeof INSTANCE_NAME === 'undefined') {
+    return 'ags'
+  }
+
+  return INSTANCE_NAME
+}
+
 app.start({
-  instanceName: INSTANCE_NAME ?? 'ags',
+  instanceName: getInstanceName(),
   css: style,
   icons: `${SRC}/icons`,
   main,

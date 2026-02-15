@@ -133,6 +133,10 @@ export function guessBarIcon(win: AstalNiri.Window): Accessor<string> {
       return "neovim"
     }
 
+    if (title().toLocaleLowerCase().startsWith("✳")) {
+      return "claude-code"
+    }
+
     if (!appInfo?.icon_name) {
       return icons.workspaces.unknown_icon
     }
