@@ -2,7 +2,7 @@ import { Gdk, Gtk } from "ags/gtk4";
 import app from "ags/gtk4/app";
 import AstalApps from "gi://AstalApps?version=0.1";
 import AstalNiri from "gi://AstalNiri?version=0.1";
-import { Accessor, createBinding, createComputed } from "gnim";
+import { Accessor, createBinding, createComputed, createEffect, createState, onCleanup } from "gnim";
 import { icons } from "./constants";
 
 type ScrollInfo = {
@@ -124,16 +124,59 @@ export function getAppInfo(appId: string): AstalApps.Application | null {
   return match;
 }
 
+const SPINNER_ICONS = [
+  "claude-spinner-0",
+  "claude-spinner-1",
+  "claude-spinner-2",
+  "claude-spinner-3",
+  "claude-spinner-4",
+  "claude-spinner-5",
+] as const;
+
+const SPINNER_INTERVAL_MS = 150;
+
 export function guessBarIcon(win: AstalNiri.Window): Accessor<string> {
   const appInfo = getAppInfo(win.app_id)
   const title = createBinding(win, "title")
+
+  const [spinnerIndex, setSpinnerIndex] = createState(0)
+  let timerId: ReturnType<typeof setInterval> | null = null
+
+  const isThinking = createComputed(() => /^[\u2800-\u28FF]/.test(title()))
+
+  createEffect(() => {
+    if (isThinking()) {
+      if (timerId === null) {
+        timerId = setInterval(() => {
+          setSpinnerIndex(i => (i + 1) % SPINNER_ICONS.length)
+        }, SPINNER_INTERVAL_MS)
+      }
+    } else {
+      if (timerId !== null) {
+        clearInterval(timerId)
+        timerId = null
+      }
+      setSpinnerIndex(0)
+    }
+  })
+
+  onCleanup(() => {
+    if (timerId !== null) {
+      clearInterval(timerId)
+      timerId = null
+    }
+  })
 
   return createComputed(() => {
     if (title().toLowerCase().endsWith("nvim")) {
       return "neovim"
     }
 
-    if (title().startsWith("✳") || /^[\u2800-\u28FF]/.test(title())) {
+    if (isThinking()) {
+      return SPINNER_ICONS[spinnerIndex()]
+    }
+
+    if (title().startsWith("✳")) {
       return "claude-code"
     }
 
