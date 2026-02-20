@@ -50,15 +50,16 @@ function BatteryIcon({ hovered }: HoverProps) {
 }
 
 function WifiIcon({ hovered }: HoverProps) {
-  const visible = createBinding(network, 'primary')(p => p === AstalNetwork.Primary.WIFI)
+  const primary = createBinding(network, 'primary')
   const icon = createBinding(network.wifi, 'strength')(wifiIconFn)
   const ssid = createBinding(network.wifi, 'ssid')
+  const visible = createComputed(() => primary() === AstalNetwork.Primary.WIFI && ssid() !== null)
 
 
-  return <box spacing={theme.bar.itemspacing}>
-    <image visible={visible} class="wifi-icon" icon_name={icon} />
+  return <box visible={visible} spacing={theme.bar.itemspacing}>
+    <image class="wifi-icon" icon_name={icon} />
     <revealer transition_duration={200} transition_type={Gtk.RevealerTransitionType.SLIDE_LEFT} reveal_child={hovered}>
-      <label label={ssid} />
+      <label label={ssid(ssid => ssid ?? '')} />
     </revealer>
   </box>
 }
