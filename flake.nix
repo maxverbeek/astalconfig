@@ -75,6 +75,9 @@
         };
       };
 
+      # no test suite; `nix flake check` gates on the package still building
+      checks.${system} = self.packages.${system};
+
       devShells.${system} = {
         default = pkgs.mkShell {
           buildInputs = [
