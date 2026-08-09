@@ -3,6 +3,8 @@ on:
   schedule:
     - cron: "0 1 * * 0" # Sunday, before nixconfig's Monday lock update
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   update:
     runs-on: ubuntu-latest
